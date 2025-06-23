@@ -25,6 +25,7 @@ function loadPatients() {
           review: '',
           export: ''
         }
+
       },
       {
         id: 2,
@@ -41,6 +42,7 @@ function loadPatients() {
           review: '',
           export: ''
         }
+        
       }
     ];
     nextId = 3;
@@ -54,6 +56,15 @@ function savePatients() {
 
 document.addEventListener('DOMContentLoaded', () => {
   loadPatients();
+  const id = parseInt(localStorage.getItem('currentPatientId'), 10);
+  if (id) {
+    const p = patientLog.find(pt => pt.id === id);
+    if (p) renderPatientBox(p);
+  }
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
   const id = parseInt(localStorage.getItem('currentPatientId'), 10);
   if (id) {
     const p = patientLog.find(pt => pt.id === id);
@@ -90,6 +101,7 @@ function addPatient() {
   patientLog.push(patient);
   savePatients();
 
+
   selectPatient(patient);
   hideAddPatientForm();
 }
@@ -125,6 +137,7 @@ function selectPatient(p) {
   localStorage.setItem('currentPatientId', p.id);
   renderPatientBox(p);
   savePatients();
+
 }
 
 function renderPatientBox(p) {

@@ -1,6 +1,7 @@
 let recognition;
 let isRecording = false;
 
+
 function getCurrentPatient() {
   const id = parseInt(localStorage.getItem('currentPatientId'), 10);
   const list = JSON.parse(localStorage.getItem('patientRecords') || '[]');
@@ -31,6 +32,7 @@ function startRecognition() {
     const patientKeywords = ['ich', 'mir', 'mich'];
     const isPatient = patientKeywords.some(k => lower.includes(k));
     const speaker = isPatient ? 'Patient' : 'Arzt';
+
     const line = `${speaker}: ${text}`;
     const area = document.getElementById('transcript');
     area.value += line + '\n';
@@ -62,8 +64,15 @@ document.getElementById('startBtn').onclick = () => {
   startRecognition();
 };
 
+
+ isRecording = false;
+    document.getElementById('status').textContent = 'Aufnahme beendet.';
+  };
+  recognition.start();
+  document.getElementById('status').textContent = 'Spracheingabe läuft...';
+};
+
 document.getElementById('stopBtn').onclick = () => {
-  isRecording = false;
   if (recognition) recognition.stop();
 };
 
