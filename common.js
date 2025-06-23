@@ -1,9 +1,4 @@
 // common.js
-function getCurrentPatient() {
-  const id = parseInt(localStorage.getItem('currentPatientId'), 10);
-  const list = JSON.parse(localStorage.getItem('patientRecords') || '[]');
-  return list.find(p => p.id === id);
-}
 
 /**
  * Rendert die Sektion aus patient.sections[sectionKey] in das Element containerId.

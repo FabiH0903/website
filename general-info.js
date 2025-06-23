@@ -6,37 +6,15 @@ const templates = [
   { first: 'Max',  last: 'Mustermann', dob: '1975-05-15', birthplace: 'Hamburg', city: 'Hamburg', insurance: 'TK',  history: 'Raucher\nRückenschmerzen', treatments: 'Röntgen Wirbelsäule', progress: 70 }
 ];
 
-let patientLog = [];
-let nextId = 1;
-
-// Lädt aus localStorage oder initialisiert leere Liste
-function loadPatients() {
-  const saved = localStorage.getItem('patientRecords');
-  if (saved) {
-    patientLog = JSON.parse(saved);
-    nextId = patientLog.reduce((max, p) => Math.max(max, p.id), 0) + 1;
-  } else {
-    patientLog = [];
-    savePatients();
-  }
-}
-
-// Speichert in localStorage
-function savePatients() {
-  localStorage.setItem('patientRecords', JSON.stringify(patientLog));
-}
-
 // Klont ein Template als neuen Patienten und zeigt ihn an
 function selectTemplate(tpl) {
   const p = {
-    id: nextId++,
     ...tpl,
-    archived: false,
-    sections: { anamnesis: '', diagnosis: '', treatment: '', review: '', export: '' }
+    progress: tpl.progress || 0,
+    archived: false
   };
-  patientLog.push(p);
-  savePatients();
-  localStorage.setItem('currentPatientId', p.id);
+  patientStore.addPatient(p);
+  patientStore.setCurrentPatient(p.id);
   renderGeneralInfo(p);
   hideArchiveModal();
 }
@@ -90,7 +68,7 @@ function showArchiveModal() {
     tplList.appendChild(li);
   });
   archList.innerHTML = '';
-  patientLog.filter(p => p.archived).forEach(p => {
+  patientStore.getPatientList().filter(p => p.archived).forEach(p => {
     const li = document.createElement('li');
     li.textContent = `${p.first} ${p.last}`;
     li.onclick = () => selectPatient(p);
@@ -115,7 +93,6 @@ function handleNewPatientSubmit(e) {
 
   const f = e.target;
   const p = {
-    id: nextId++,
     first: f.first.value.trim(),
     last: f.last.value.trim(),
     dob: f.dob.value,
@@ -125,36 +102,30 @@ function handleNewPatientSubmit(e) {
     history: f.history.value.trim(),
     treatments: f.treatments.value.trim(),
     progress: 0,
-    archived: false,
-    sections: { anamnesis: '', diagnosis: '', treatment: '', review: '', export: '' }
+    archived: false
   };
 
-  patientLog.push(p);
-  savePatients();
-  localStorage.setItem('currentPatientId', p.id);
+  patientStore.addPatient(p);
+  patientStore.setCurrentPatient(p.id);
   renderGeneralInfo(p);
-  
+
 }
 
 // Archiviert aktuellen Patienten
 function archiveCurrentPatient() {
-  const id = +localStorage.getItem('currentPatientId');
-  const p = patientLog.find(x => x.id === id);
+  const p = patientStore.getCurrentPatient();
   if (!p) return alert('Kein Patient ausgewählt.');
   p.archived = true;
-  savePatients();
+  patientStore.updatePatient(p);
   document.getElementById('generalInfoContainer').innerHTML = '<p>Kein Patient ausgewählt.</p>';
   localStorage.removeItem('currentPatientId');
 }
 
 // Init
 document.addEventListener('DOMContentLoaded', () => {
-  loadPatients();
+  patientStore.loadPatients();
   document.getElementById('newPatientForm')
           .addEventListener('submit', handleNewPatientSubmit);
-  const saved = localStorage.getItem('currentPatientId');
-  if (saved) {
-    const p = patientLog.find(x => x.id === +saved);
-    if (p) renderGeneralInfo(p);
-  }
+  const p = patientStore.getCurrentPatient();
+  if (p) renderGeneralInfo(p);
 });
