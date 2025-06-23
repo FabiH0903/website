@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discharge IQ</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f2e9dd;
+    }
+
+    .header {
+      background: linear-gradient(to right, #e85d75, #ff9aa2);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .header-left img {
+      height: 60px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .user-info {
+      text-align: right;
+      font-size: 0.9em;
+      color: #fff;
+    }
+
+    .header-menu {
+      position: relative;
+    }
+
+    .menu-toggle {
+      background-color: #fff;
+      border: none;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 4px;
+    }
+
+    .menu-dropdown {
+      display: none;
+      position: absolute;
+      top: 45px;
+      right: 0;
+      background-color: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      border-radius: 4px;
+      overflow: hidden;
+      z-index: 1001;
+    }
+
+    .menu-dropdown button {
+      display: block;
+      width: 100%;
+      padding: 10px 20px;
+      background: none;
+      border: none;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .menu-dropdown button:hover {
+      background-color: #f1f1f1;
+    }
+
+    .user-icon {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background-color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #e85d75;
+    }
+
+    .sidebar {
+      width: 200px;
+      background-color: #fceba9;
+      position: fixed;
+      top: 70px;
+      bottom: 0;
+      left: 0;
+      padding: 20px 10px;
+      overflow-y: auto;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    }
+
+    .section-title {
+      background-color: #d4a017;
+      color: #fff;
+      font-weight: bold;
+      padding: 6px 10px;
+      margin: 15px 0 5px 0;
+      border-radius: 4px;
+    }
+
+    .nav-button {
+      background-color: #fff6ce;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 5px 0;
+      text-align: left;
+      cursor: pointer;
+      box-shadow: 1px 1px 3px #aaa;
+      text-decoration: none;
+      color: black;
+      display: block;
+      border-radius: 6px;
+      font-size: 1em;
+      transition: background-color 0.2s ease;
+    }
+
+    .nav-button:hover {
+      background-color: #ffe88b;
+    }
+
+    .main-content {
+      margin-left: 200px;
+      padding: 100px 30px 30px 30px;
+    }
+  </style>
+  <script>
+   function loadContent(page) {
+  fetch(page)
+    .then(response => response.text())
+    .then(html => {
+      document.querySelector('.main-content').innerHTML = html;
+
+      // Script dynamisch nachladen (z. B. general-info.js)
+      const scriptName = page.replace('.html', '.js');
+      const script = document.createElement('script');
+      script.src = scriptName;
+      script.onload = () => console.log(`Loaded ${scriptName}`);
+      document.body.appendChild(script);
+    })
+    .catch(error => {
+      document.querySelector('.main-content').innerHTML = '<p>Error loading page.</p>';
+    });
+}
+
+    function toggleMenu() {
+      const menu = document.getElementById("menuDropdown");
+      menu.style.display = menu.style.display === "block" ? "none" : "block";
+    }
+
+    window.onclick = function(e) {
+      if (!e.target.matches('.menu-toggle')) {
+        const menu = document.getElementById("menuDropdown");
+        if (menu && menu.style.display === "block") {
+          menu.style.display = "none";
+        }
+      }
+    }
+  </script>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <img src="logo.png" alt="Logo">
+    </div>
+    <div class="header-right">
+      <div class="user-info">
+        Dr. med. Anna Mustermann<br>Internist<br>Musterklinikum
+      </div>
+      <div class="user-icon">A</div>
+      <div class="header-menu">
+        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+        <div id="menuDropdown" class="menu-dropdown">
+          <button onclick="alert('Help clicked')">Help</button>
+          <button onclick="alert('Feedback clicked')">Feedback</button>
+          <button onclick="alert('News clicked')">News</button>
+          <button onclick="alert('Statistics clicked')">Statistics</button>
+          <button onclick="alert('Settings clicked')">Settings</button>
+          <button onclick="alert('Log-out clicked')">Log-out</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="section-title">Patient Information</div>
+    <a class="nav-button" href="#" onclick="loadContent('general-info.html')">General Information</a>
+    <a class="nav-button" href="#" onclick="loadContent('anamnesis.html')">Anamnesis Protocol</a>
+    <a class="nav-button" href="#" onclick="loadContent('diagnosis.html')">Diagnosis Results</a>
+
+    <div class="section-title">Tools</div>
+    <a class="nav-button" href="#" onclick="loadContent('dictation.html')">Dictation</a>
+    <a class="nav-button" href="#" onclick="loadContent('editor.html')">Editor</a>
+    <a class="nav-button" href="#" onclick="loadContent('templates.html')">Templates</a>
+
+    <div class="section-title">Clinical Summary</div>
+    <a class="nav-button" href="#" onclick="loadContent('treatment-plan.html')">Treatment Plan</a>
+    <a class="nav-button" href="#" onclick="loadContent('diagnosis-summary.html')">Diagnosis Summary</a>
+
+    <div class="section-title">Discharge & Export</div>
+    <a class="nav-button" href="#" onclick="loadContent('letter-draft.html')">Letter Draft</a>
+    <a class="nav-button" href="#" onclick="loadContent('review.html')">Review</a>
+    <a class="nav-button" href="#" onclick="loadContent('export.html')">Export</a>
+  </div>
+
+  <div class="main-content">
+    <h1>Welcome to Discharge IQ</h1>
+    <p>Select a menu item from the left to begin.</p>
+  </div>
+</body>
+</html>

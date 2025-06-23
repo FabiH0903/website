@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>General Information</title>
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; background-color: #f2f2f2; }
+    .toolbar { padding: 15px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; gap: 10px; }
+    .toolbar button { padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; }
+    .toolbar .add-patient { background: #e85d75; color: #fff; }
+    .toolbar .add-note    { background: #8e8df0; color: #fff; }
+    .toolbar .show-archived { background: #888; color: #fff; }
+    #infoContainer { padding: 20px; display: flex; flex-wrap: wrap; gap: 20px; }
+    .box { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); flex: 1 1 300px; }
+    /* Modals */
+    .modal-backdrop { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display: none; align-items:center; justify-content:center; }
+    .modal { background: #fff; padding: 20px; border-radius: 10px; width: 400px; max-height: 90%; overflow-y: auto; }
+    .modal h3 { margin-top: 0; }
+    .modal label { display: block; margin: 10px 0; }
+    .modal textarea, .modal input { width: 100%; box-sizing: border-box; }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <button class="add-patient" onclick="showAddPatientForm()">+ Add Patient</button>
+    <button class="add-note" onclick="addNoteBox()">+ Add Note</button>
+    <button class="show-archived" onclick="showArchivedModal()">Show Archived</button>
+  </div>
+
+  <div id="infoContainer">
+    <!-- Dynamischer Inhalt: Boxen hier einfügen -->
+  </div>
+
+  <!-- Modal Add Patient -->
+  <div id="patientModal" class="modal-backdrop">
+    <div class="modal">
+      <h3>Neuen Patienten hinzufügen</h3>
+      <form onsubmit="event.preventDefault(); addPatient();">
+        <label>Vorname:<input id="first" type="text" required></label>
+        <label>Nachname:<input id="last" type="text" required></label>
+        <label>Geburtsdatum:<input id="dob" type="date" required></label>
+        <label>Wohnort:<input id="city" type="text" required></label>
+        <label>Krankheitsgeschichte:<textarea id="history" rows="3" required></textarea></label>
+        <label>Untersuchungen (done/pending):<textarea id="tests" rows="3" required></textarea></label>
+        <button type="submit" style="margin-top:10px; width:100%; background:#e85d75;color:#fff;">Speichern</button>
+        <button type="button" onclick="hideAddPatientForm()" style="margin-top:10px; width:100%; background:#ccc;">Abbrechen</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Archived Patients -->
+  <div id="archiveModal" class="modal-backdrop">
+    <div class="modal">
+      <h3>Archivierte Patienten</h3>
+      <ul id="archiveList" style="list-style:none; padding:0;"></ul>
+      <button onclick="hideArchiveModal()" style="margin-top:10px; width:100%; background:#ccc;">Schließen</button>
+    </div>
+  </div>
+
+  <script src="general-info.js"></script>
+</body>
+</html>
