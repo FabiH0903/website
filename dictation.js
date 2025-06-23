@@ -1,4 +1,6 @@
 let recognition;
+let isRecording = false;
+
 
 function getCurrentPatient() {
   const id = parseInt(localStorage.getItem('currentPatientId'), 10);
@@ -15,7 +17,7 @@ function savePatient(patient) {
   }
 }
 
-document.getElementById('startBtn').onclick = () => {
+function startRecognition() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
     document.getElementById('status').textContent = 'Browser unterstützt keine Spracherkennung.';
@@ -26,7 +28,11 @@ document.getElementById('startBtn').onclick = () => {
   recognition.interimResults = false;
   recognition.onresult = e => {
     const text = e.results[0][0].transcript;
-    const speaker = text.toLowerCase().includes('patient') ? 'Patient' : 'Arzt';
+    const lower = text.toLowerCase();
+    const patientKeywords = ['ich', 'mir', 'mich'];
+    const isPatient = patientKeywords.some(k => lower.includes(k));
+    const speaker = isPatient ? 'Patient' : 'Arzt';
+
     const line = `${speaker}: ${text}`;
     const area = document.getElementById('transcript');
     area.value += line + '\n';
@@ -42,6 +48,24 @@ document.getElementById('startBtn').onclick = () => {
     document.getElementById('status').textContent = 'Fehler: ' + err.error;
   };
   recognition.onend = () => {
+    if (isRecording) {
+      startRecognition();
+    } else {
+      document.getElementById('status').textContent = 'Aufnahme beendet.';
+    }
+  };
+  recognition.start();
+  document.getElementById('status').textContent = 'Spracheingabe läuft...';
+}
+
+document.getElementById('startBtn').onclick = () => {
+  if (isRecording) return;
+  isRecording = true;
+  startRecognition();
+};
+
+
+ isRecording = false;
     document.getElementById('status').textContent = 'Aufnahme beendet.';
   };
   recognition.start();
