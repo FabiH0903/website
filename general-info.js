@@ -5,6 +5,14 @@ const patientLog = [
 ];
 let nextId = 3;
 
+document.addEventListener('DOMContentLoaded', () => {
+  const id = parseInt(localStorage.getItem('currentPatientId'), 10);
+  if (id) {
+    const p = patientLog.find(pt => pt.id === id);
+    if (p) renderPatientBox(p);
+  }
+});
+
 function showAddPatientForm() {
   document.getElementById('patientModal').style.display = 'flex';
 }
@@ -20,12 +28,11 @@ function addPatient() {
   const history = document.getElementById('history').value;
   const tests   = document.getElementById('tests').value;
 
-  // Box anzeigen
-  infoContainer.innerHTML = '';
-  renderPatientBox({ first, last, dob, city, history, tests });
-
   // Log
-  patientLog.push({ id: nextId++, first, last, dob, city, history, tests });
+  const patient = { id: nextId++, first, last, dob, city, history, tests };
+  patientLog.push(patient);
+
+  selectPatient(patient);
   hideAddPatientForm();
 }
 
@@ -47,13 +54,18 @@ function showArchivedModal() {
     li.style.padding = '8px';
     li.style.cursor = 'pointer';
     li.textContent = `${p.first} ${p.last}`;
-    li.onclick = () => { hideArchiveModal(); renderPatientBox(p); };
+    li.onclick = () => { hideArchiveModal(); selectPatient(p); };
     list.appendChild(li);
   });
   document.getElementById('archiveModal').style.display = 'flex';
 }
 function hideArchiveModal() {
   document.getElementById('archiveModal').style.display = 'none';
+}
+
+function selectPatient(p) {
+  localStorage.setItem('currentPatientId', p.id);
+  renderPatientBox(p);
 }
 
 function renderPatientBox(p) {
