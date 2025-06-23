@@ -49,6 +49,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+  const id = parseInt(localStorage.getItem('currentPatientId'), 10);
+  if (id) {
+    const p = patientLog.find(pt => pt.id === id);
+    if (p) renderPatientBox(p);
+  }
+});
+
 function showAddPatientForm() {
   document.getElementById('patientModal').style.display = 'flex';
 }
@@ -77,6 +85,7 @@ function addPatient() {
 
   patientLog.push(patient);
   savePatients();
+
 
   selectPatient(patient);
   hideAddPatientForm();
@@ -113,6 +122,7 @@ function selectPatient(p) {
   localStorage.setItem('currentPatientId', p.id);
   renderPatientBox(p);
   savePatients();
+
 }
 
 function renderPatientBox(p) {
