@@ -16,9 +16,15 @@ function loadPatients() {
         last: 'Musterfrau',
         dob: '1975-05-12',
         city: 'Hamburg',
-        history: 'Diabetes Typ II seit 2010',
-        tests: 'Blutzucker-Kontrolle: done\nAugenarzt: pending',
-        sections: { anamnesis: '', diagnosis: '', treatment: '', review: '', export: '' }
+        history: 'Diabetes Typ II seit 2010\nHypertonie',
+        tests: 'Blutzucker-Kontrolle: done\nAugenarzt: pending\nHbA1c: 8%',
+        sections: {
+          anamnesis: 'Patientin berichtet über häufigen Durst und Harndrang seit 2 Monaten.\nErhöhte Müdigkeit und Gewichtsverlust von ca. 5 kg.',
+          diagnosis: 'Neu diagnostizierter Diabetes Typ II.',
+          treatment: 'Metformin 500 mg 2x täglich geplant.',
+          review: '',
+          export: ''
+        }
       },
       {
         id: 2,
@@ -26,9 +32,15 @@ function loadPatients() {
         last: 'Mustermann',
         dob: '1982-10-23',
         city: 'Berlin',
-        history: 'Asthma bronchiale seit Kindheit',
+        history: 'Asthma bronchiale seit Kindheit\nMultiple Allergien',
         tests: 'Lungenfunktionstest: done\nAllergietest: pending',
-        sections: { anamnesis: '', diagnosis: '', treatment: '', review: '', export: '' }
+        sections: {
+          anamnesis: 'Patient klagt über wiederkehrende Atemnot bei Belastung.\nAktuell: Inhalationstherapie mit Salbutamol.',
+          diagnosis: 'Verdacht auf allergisches Asthma.',
+          treatment: 'Dauertherapie mit inhalativen Kortikosteroiden erwägen.',
+          review: '',
+          export: ''
+        }
       }
     ];
     nextId = 3;
