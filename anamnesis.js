@@ -1,49 +1,29 @@
-// Beispiel-Daten für archivierte Patienten
-const anamnesisData = {
-  1: {
-    name: 'Anna Musterfrau',
-    points: [
-      'Patientin berichtet über häufigen Durst und Harndrang seit 2 Monaten',
-      'Erhöhte Müdigkeit und Gewichtsverlust von ca. 5 kg',
-      'Diagnose: Neu diagnostizierter Diabetes Typ II',
-      'Bisherige Maßnahmen: Blutzuckermessung durchgeführt, Ernährungsberatung eingeleitet',
-    ]
-  },
-  2: {
-    name: 'Max Mustermann',
-    points: [
-      'Patient klagt über wiederkehrende Atemnot bei Belastung',
-      'Dokumentierte Asthmaanfälle in der Kindheit',
-      'Aktuell: Inhalationstherapie mit Salbutamol',
-      'Bisherige Maßnahmen: Lungenfunktionstest und Allergietest geplant',
-    ]
-  }
-};
+function loadPatient(id) {
+  const list = JSON.parse(localStorage.getItem('patientRecords') || '[]');
+  return list.find(p => p.id === id);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('anamnesisContainer');
   const headerDisplay = document.getElementById('currentPatientDisplay');
-  // Ausgewählten Patienten aus LocalStorage holen
   const id = parseInt(localStorage.getItem('currentPatientId'), 10);
 
-  if (!id || !anamnesisData[id]) {
+  const patient = loadPatient(id);
+  if (!patient) {
     headerDisplay.textContent = 'keiner ausgewählt';
     container.innerHTML = '<p>Kein Patient ausgewählt oder keine Anamnese vorhanden.</p>';
     return;
   }
 
-  const data = anamnesisData[id];
-  // Header aktualisieren
-  headerDisplay.textContent = data.name;
+  headerDisplay.textContent = `${patient.first} ${patient.last}`;
 
-  // Anamnese anzeigen
+  const notes = patient.sections?.anamnesis || '';
+
   const section = document.createElement('div');
   section.className = 'patient-section';
   section.innerHTML = `
-    <h3>${data.name}</h3>
-    <ul>
-      ${data.points.map(pt => `<li>${pt}</li>`).join('')}
-    </ul>
+    <h3>${patient.first} ${patient.last}</h3>
+    <p>${notes ? notes.replace(/\n/g, '<br>') : 'Keine Einträge.'}</p>
   `;
   container.appendChild(section);
 });

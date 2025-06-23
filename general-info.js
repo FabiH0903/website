@@ -1,9 +1,53 @@
 const infoContainer = document.getElementById('infoContainer');
-const patientLog = [
-  { id: 1, first:'Anna', last:'Musterfrau', dob:'1975-05-12', city:'Hamburg', history:'Diabetes Typ II seit 2010', tests:'Blutzucker-Kontrolle: done\nAugenarzt: pending' },
-  { id: 2, first:'Max', last:'Mustermann', dob:'1982-10-23', city:'Berlin', history:'Asthma bronchiale seit Kindheit', tests:'Lungenfunktionstest: done\nAllergietest: pending' }
-];
-let nextId = 3;
+
+let patientLog = [];
+let nextId = 1;
+
+function loadPatients() {
+  const stored = localStorage.getItem('patientRecords');
+  if (stored) {
+    patientLog = JSON.parse(stored);
+    nextId = patientLog.reduce((max, p) => Math.max(max, p.id), 0) + 1;
+  } else {
+    patientLog = [
+      {
+        id: 1,
+        first: 'Anna',
+        last: 'Musterfrau',
+        dob: '1975-05-12',
+        city: 'Hamburg',
+        history: 'Diabetes Typ II seit 2010',
+        tests: 'Blutzucker-Kontrolle: done\nAugenarzt: pending',
+        sections: { anamnesis: '', diagnosis: '', treatment: '', review: '', export: '' }
+      },
+      {
+        id: 2,
+        first: 'Max',
+        last: 'Mustermann',
+        dob: '1982-10-23',
+        city: 'Berlin',
+        history: 'Asthma bronchiale seit Kindheit',
+        tests: 'Lungenfunktionstest: done\nAllergietest: pending',
+        sections: { anamnesis: '', diagnosis: '', treatment: '', review: '', export: '' }
+      }
+    ];
+    nextId = 3;
+    localStorage.setItem('patientRecords', JSON.stringify(patientLog));
+  }
+}
+
+function savePatients() {
+  localStorage.setItem('patientRecords', JSON.stringify(patientLog));
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadPatients();
+  const id = parseInt(localStorage.getItem('currentPatientId'), 10);
+  if (id) {
+    const p = patientLog.find(pt => pt.id === id);
+    if (p) renderPatientBox(p);
+  }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
   const id = parseInt(localStorage.getItem('currentPatientId'), 10);
@@ -28,9 +72,20 @@ function addPatient() {
   const history = document.getElementById('history').value;
   const tests   = document.getElementById('tests').value;
 
-  // Log
-  const patient = { id: nextId++, first, last, dob, city, history, tests };
+  const patient = {
+    id: nextId++,
+    first,
+    last,
+    dob,
+    city,
+    history,
+    tests,
+    sections: { anamnesis: '', diagnosis: '', treatment: '', review: '', export: '' }
+  };
+
   patientLog.push(patient);
+  savePatients();
+
 
   selectPatient(patient);
   hideAddPatientForm();
@@ -66,6 +121,8 @@ function hideArchiveModal() {
 function selectPatient(p) {
   localStorage.setItem('currentPatientId', p.id);
   renderPatientBox(p);
+  savePatients();
+
 }
 
 function renderPatientBox(p) {
