@@ -1,78 +1,76 @@
-let recognition;
-let isRecording = false;
+// dictation.js
 
+document.addEventListener('DOMContentLoaded', () => {
+  let recognition;
+  let isRecording = false;
+  const startBtn = document.getElementById('startBtn');
+  const stopBtn  = document.getElementById('stopBtn');
+  const status   = document.getElementById('status');
+  const area     = document.getElementById('transcript');
 
+  function updateUI() {
+    startBtn.disabled = isRecording;
+    stopBtn.disabled  = !isRecording;
+  }
+
+  function startRecognition() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+      status.textContent = 'Browser unterstützt keine Spracherkennung.';
+      return;
+    }
+    recognition = new SR();
+    recognition.lang = 'de-DE';
+    recognition.interimResults = false;
+
+    recognition.onresult = e => {
+      const text = e.results[0][0].transcript;
+      const isPatient = /ich|mir|mich/i.test(text);
+      const line = `${isPatient ? 'Patient' : 'Arzt'}: ${text}`;
+      area.value += line + '\n';
+
+      // Speichern in patient.sections.anamnesis
+      const patient = getCurrentPatient();
+      if (patient) {
+        patient.sections = patient.sections || {};
+        patient.sections.anamnesis = (patient.sections.anamnesis || '') + line + '\n';
+        savePatient(patient);
+      }
+    };
+
+    recognition.onerror = e => { status.textContent = 'Fehler: ' + e.error; };
+    recognition.onend   = () => {
+      isRecording = false;
+      updateUI();
+      status.textContent = 'Aufnahme beendet.';
+    };
+
+    recognition.start();
+    isRecording = true;
+    updateUI();
+    status.textContent = 'Spracheingabe läuft…';
+  }
+
+  startBtn.addEventListener('click', () => { if (!isRecording) startRecognition(); });
+  stopBtn.addEventListener('click', () => { if (recognition) recognition.stop(); });
+
+  // Initial UI-State
+  updateUI();
+  status.textContent = 'Bereit.';
+});
+
+// Hilfsfunktionen (aus common.js oder dictation-spezifisch)
 function getCurrentPatient() {
   const id = parseInt(localStorage.getItem('currentPatientId'), 10);
   const list = JSON.parse(localStorage.getItem('patientRecords') || '[]');
   return list.find(p => p.id === id);
 }
 
-function savePatient(patient) {
+function savePatient(p) {
   const list = JSON.parse(localStorage.getItem('patientRecords') || '[]');
-  const idx = list.findIndex(p => p.id === patient.id);
+  const idx = list.findIndex(x => x.id === p.id);
   if (idx !== -1) {
-    list[idx] = patient;
+    list[idx] = p;
     localStorage.setItem('patientRecords', JSON.stringify(list));
   }
 }
-
-function startRecognition() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) {
-    document.getElementById('status').textContent = 'Browser unterstützt keine Spracherkennung.';
-    return;
-  }
-  recognition = new SpeechRecognition();
-  recognition.lang = 'de-DE';
-  recognition.interimResults = false;
-  recognition.onresult = e => {
-    const text = e.results[0][0].transcript;
-    const lower = text.toLowerCase();
-    const patientKeywords = ['ich', 'mir', 'mich'];
-    const isPatient = patientKeywords.some(k => lower.includes(k));
-    const speaker = isPatient ? 'Patient' : 'Arzt';
-
-    const line = `${speaker}: ${text}`;
-    const area = document.getElementById('transcript');
-    area.value += line + '\n';
-
-    const patient = getCurrentPatient();
-    if (patient) {
-      patient.sections = patient.sections || {};
-      patient.sections.anamnesis = (patient.sections.anamnesis || '') + line + '\n';
-      savePatient(patient);
-    }
-  };
-  recognition.onerror = err => {
-    document.getElementById('status').textContent = 'Fehler: ' + err.error;
-  };
-  recognition.onend = () => {
-    if (isRecording) {
-      startRecognition();
-    } else {
-      document.getElementById('status').textContent = 'Aufnahme beendet.';
-    }
-  };
-  recognition.start();
-  document.getElementById('status').textContent = 'Spracheingabe läuft...';
-}
-
-document.getElementById('startBtn').onclick = () => {
-  if (isRecording) return;
-  isRecording = true;
-  startRecognition();
-};
-
-
- isRecording = false;
-    document.getElementById('status').textContent = 'Aufnahme beendet.';
-  };
-  recognition.start();
-  document.getElementById('status').textContent = 'Spracheingabe läuft...';
-};
-
-document.getElementById('stopBtn').onclick = () => {
-  if (recognition) recognition.stop();
-};
-

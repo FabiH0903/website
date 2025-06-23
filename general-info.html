@@ -1,60 +1,96 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>General Information</title>
+  <link rel="stylesheet" href="styles.css">
   <style>
-    body { margin: 0; font-family: Arial, sans-serif; background-color: #f2f2f2; }
-    .toolbar { padding: 15px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; gap: 10px; }
-    .toolbar button { padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; }
-    .toolbar .add-patient { background: #e85d75; color: #fff; }
-    .toolbar .add-note    { background: #8e8df0; color: #fff; }
-    .toolbar .show-archived { background: #888; color: #fff; }
-    #infoContainer { padding: 20px; display: flex; flex-wrap: wrap; gap: 20px; }
-    .box { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); flex: 1 1 300px; }
-    /* Modals */
-    .modal-backdrop { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display: none; align-items:center; justify-content:center; }
-    .modal { background: #fff; padding: 20px; border-radius: 10px; width: 400px; max-height: 90%; overflow-y: auto; }
-    .modal h3 { margin-top: 0; }
-    .modal label { display: block; margin: 10px 0; }
-    .modal textarea, .modal input { width: 100%; box-sizing: border-box; }
+    .toolbar { margin-bottom:1em; display:flex; gap:0.5em; }
+    .toolbar button { padding:0.5em 1em; border:none; border-radius:4px; background:#4a90e2; color:#fff; cursor:pointer; }
+    .toolbar button:hover { opacity:0.9; }
+    .info-container { display:grid; grid-template-columns:1fr; gap:1em; }
+    @media (min-width:768px) { .info-container { grid-template-columns:1fr 1fr; }
+      .info-box.personal { grid-column:span 2; }
+    }
+    .info-box { background:#fafafa; border:1px solid #ddd; padding:1.2em; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.1); }
+    .info-box h3 { margin-top:0; color:#333; }
+    .progress-bar { width:100%; height:16px; background:#eee; border-radius:8px; overflow:hidden; margin:0.5em 0; }
+    .progress { height:100%; background:#4a90e2; border-radius:8px 0 0 8px; }
+
+    .modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center; }
+    .modal-content { background:#fff; padding:1.5em; border-radius:6px; max-width:400px; width:90%; }
+    .modal-content h3 { margin-top:0; }
+    .modal-content ul { list-style:none; margin:0.5em 0 1em; padding:0; max-height:200px; overflow-y:auto; }
+    .modal-content li { padding:0.5em; border-bottom:1px solid #eee; cursor:pointer;}
+    .modal-content li:hover { background:#f0f0f0; }
+    .modal-content button { margin-top:1em; padding:0.5em 1em; border:none; border-radius:4px; background:#e74c3c; color:#fff; cursor:pointer; }
+
+    /* Neues-Patient-Formular */
+    #newPatientForm input, #newPatientForm textarea { width:100%; padding:0.5em; margin-bottom:0.8em; border:1px solid #ccc; border-radius:4px; }
+    #newPatientForm label { font-weight:bold; display:block; margin-bottom:0.3em; }
+    #newPatientForm .actions { display:flex; justify-content:flex-end; gap:0.5em; }
+    #newPatientForm .actions .cancel { background:#ccc; }
+    #newPatientForm .actions .save   { background:#4a90e2; color:#fff; }
   </style>
 </head>
 <body>
   <div class="toolbar">
-    <button class="add-patient" onclick="showAddPatientForm()">+ Add Patient</button>
-    <button class="add-note" onclick="addNoteBox()">+ Add Note</button>
-    <button class="show-archived" onclick="showArchivedModal()">Show Archived</button>
+    <button onclick="showNewPatientModal()">+ Neuer Patient</button>
+    <button onclick="addNoteBox()">+ Add Note</button>
+    <button onclick="showArchiveModal()">Vorlage / Archiv</button>
+    <button onclick="archiveCurrentPatient()">Archive Current</button>
   </div>
 
-  <div id="infoContainer">
-    <!-- Dynamischer Inhalt: Boxen hier einfügen -->
+  <div id="generalInfoContainer">
+    <p>Kein Patient ausgewählt.</p>
   </div>
 
-  <!-- Modal Add Patient -->
-  <div id="patientModal" class="modal-backdrop">
-    <div class="modal">
-      <h3>Neuen Patienten hinzufügen</h3>
-      <form onsubmit="event.preventDefault(); addPatient();">
-        <label>Vorname:<input id="first" type="text" required></label>
-        <label>Nachname:<input id="last" type="text" required></label>
-        <label>Geburtsdatum:<input id="dob" type="date" required></label>
-        <label>Wohnort:<input id="city" type="text" required></label>
-        <label>Krankheitsgeschichte:<textarea id="history" rows="3" required></textarea></label>
-        <label>Untersuchungen (done/pending):<textarea id="tests" rows="3" required></textarea></label>
-        <button type="submit" style="margin-top:10px; width:100%; background:#e85d75;color:#fff;">Speichern</button>
-        <button type="button" onclick="hideAddPatientForm()" style="margin-top:10px; width:100%; background:#ccc;">Abbrechen</button>
-      </form>
+  <!-- Modal: Vorlagen & Archiv -->
+  <div id="archiveModal" class="modal">
+    <div class="modal-content">
+      <h3>Vorlagen</h3>
+      <ul id="templateList"></ul>
+      <hr>
+      <h3>Archivierte Patienten</h3>
+      <ul id="archiveList"></ul>
+      <button onclick="hideArchiveModal()">Schließen</button>
     </div>
   </div>
 
-  <!-- Modal Archived Patients -->
-  <div id="archiveModal" class="modal-backdrop">
-    <div class="modal">
-      <h3>Archivierte Patienten</h3>
-      <ul id="archiveList" style="list-style:none; padding:0;"></ul>
-      <button onclick="hideArchiveModal()" style="margin-top:10px; width:100%; background:#ccc;">Schließen</button>
+  <!-- Modal: Neuer Patient -->
+  <div id="newPatientModal" class="modal">
+    <div class="modal-content">
+      <h3>Neuen Patienten anlegen</h3>
+      <form id="newPatientForm">
+        <label for="first">Vorname</label>
+        <input id="first" name="first" required>
+
+        <label for="last">Nachname</label>
+        <input id="last" name="last" required>
+
+        <label for="dob">Geburtsdatum</label>
+        <input id="dob" name="dob" type="date" required>
+
+        <label for="birthplace">Geburtsort</label>
+        <input id="birthplace" name="birthplace" required>
+
+        <label for="city">Stadt</label>
+        <input id="city" name="city" required>
+
+        <label for="insurance">Krankenkasse</label>
+        <input id="insurance" name="insurance" required>
+
+        <label for="history">Aktuelles Krankheitsbild</label>
+        <textarea id="history" name="history" rows="3"></textarea>
+
+        <label for="treatments">Bisherige Behandlungen</label>
+        <textarea id="treatments" name="treatments" rows="3"></textarea>
+
+        <div class="actions">
+          <button type="button" class="cancel" onclick="hideNewPatientModal()">Abbrechen</button>
+          <button type="submit" class="save">Speichern</button>
+        </div>
+      </form>
     </div>
   </div>
 

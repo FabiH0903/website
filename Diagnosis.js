@@ -1,41 +1,64 @@
-const content = document.getElementById('content');
-const archived = [
-  {
-    id: 1,
-    name: 'Anna Musterfrau',
-    date: '2025-06-15',
-    analysis: {
-      summary: 'Blutzuckerwerte stabil bei 110 mg/dL. Augenscreening empfohlen.',
-      performed: ['Blutzucker-Kontrolle', 'Ernährungsberatung'],
-      nextSteps: ['Augenarzt-Termin', 'Bewegungsprogramm']
-    }
-  },
-  {
-    id: 2,
-    name: 'Max Mustermann',
-    date: '2025-06-10',
-    analysis: {
-      summary: 'Asthma unter Kontrolle mit Salbutamol-Inhalator. Leichte Einschränkung beim Sport.',
-      performed: ['Lungenfunktionstest', 'Allergietest'],
-      nextSteps: ['Spirometrie in 3 Monaten', 'Inhalationstraining']
-    }
-  }
-];
+// dictation.js
+let recognition;
+let isRecording = false;
 
-function renderAnalysis() {
-  archived.forEach(p => {
-    const div = document.createElement('div');
-    div.className = 'entry';
-    div.innerHTML = `
-      <h3>${p.name} (Archiviert: ${p.date})</h3>
-      <p><strong>Kurzzusammenfassung:</strong> ${p.analysis.summary}</p>
-      <p><strong>Durchgeführte Maßnahmen:</strong></p>
-      <ul>${p.analysis.performed.map(item => `<li>${item}</li>`).join('')}</ul>
-      <p><strong>Empfohlene nächste Schritte:</strong></p>
-      <ul>${p.analysis.nextSteps.map(item => `<li>${item}</li>`).join('')}</ul>
-    `;
-    content.appendChild(div);
-  });
+function getCurrentPatient() {
+  const id = parseInt(localStorage.getItem('currentPatientId'), 10);
+  const list = JSON.parse(localStorage.getItem('patientRecords') || '[]');
+  return list.find(p => p.id === id);
 }
 
-document.addEventListener('DOMContentLoaded', renderAnalysis);
+function savePatient(patient) {
+  const list = JSON.parse(localStorage.getItem('patientRecords') || '[]');
+  const idx = list.findIndex(p => p.id === patient.id);
+  if (idx !== -1) {
+    list[idx] = patient;
+    localStorage.setItem('patientRecords', JSON.stringify(list));
+  }
+}
+
+function updateUI() {
+  document.getElementById('startBtn').disabled = isRecording;
+  document.getElementById('stopBtn').disabled  = !isRecording;
+}
+
+function startRecognition() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    return document.getElementById('status').textContent = 'Kein Spracherkennungs‐API im Browser.';
+  }
+  recognition = new SpeechRecognition();
+  recognition.lang = 'de-DE';
+  recognition.interimResults = false;
+  recognition.onresult = e => {
+    const text = e.results[0][0].transcript;
+    const speaker = /ich|mir|mich/i.test(text) ? 'Patient' : 'Arzt';
+    const line = `${speaker}: ${text}`;
+    document.getElementById('transcript').value += line + '\n';
+    const patient = getCurrentPatient();
+    if (patient) {
+      patient.sections = patient.sections || {};
+      patient.sections.anamnesis = (patient.sections.anamnesis || '') + line + '\n';
+      savePatient(patient);
+    }
+  };
+  recognition.onerror = e => {
+    document.getElementById('status').textContent = 'Fehler: ' + e.error;
+  };
+  recognition.onend = () => {
+    isRecording = false;
+    updateUI();
+    document.getElementById('status').textContent = 'Aufnahme beendet.';
+  };
+  recognition.start();
+  isRecording = true;
+  updateUI();
+  document.getElementById('status').textContent = 'Aufnahme läuft…';
+}
+
+document.getElementById('startBtn').addEventListener('click', () => {
+  if (!isRecording) startRecognition();
+});
+document.getElementById('stopBtn').addEventListener('click', () => {
+  if (recognition) recognition.stop();
+});
