@@ -1,2 +1,21 @@
-<h2>dictation Page</h2>
-<p>This is a placeholder for the dictation section.</p>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Dictation</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    textarea { width: 100%; box-sizing: border-box; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <h2>Diktierfunktion</h2>
+  <textarea id="transcript" rows="10" placeholder="Transkription..."></textarea>
+  <div>
+    <button id="startBtn">Aufnahme starten</button>
+    <button id="stopBtn">Stop</button>
+  </div>
+  <p id="status"></p>
+  <script src="dictation.js"></script>
+</body>
+</html>
