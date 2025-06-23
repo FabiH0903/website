@@ -2,21 +2,6 @@
 let recognition;
 let isRecording = false;
 
-function getCurrentPatient() {
-  const id = parseInt(localStorage.getItem('currentPatientId'), 10);
-  const list = JSON.parse(localStorage.getItem('patientRecords') || '[]');
-  return list.find(p => p.id === id);
-}
-
-function savePatient(patient) {
-  const list = JSON.parse(localStorage.getItem('patientRecords') || '[]');
-  const idx = list.findIndex(p => p.id === patient.id);
-  if (idx !== -1) {
-    list[idx] = patient;
-    localStorage.setItem('patientRecords', JSON.stringify(list));
-  }
-}
-
 function updateUI() {
   document.getElementById('startBtn').disabled = isRecording;
   document.getElementById('stopBtn').disabled  = !isRecording;
@@ -39,6 +24,7 @@ function startRecognition() {
     if (patient) {
       patient.sections = patient.sections || {};
       patient.sections.anamnesis = (patient.sections.anamnesis || '') + line + '\n';
+      patient.sections.diagnosisResults = (patient.sections.diagnosisResults || '') + line + '\n';
       savePatient(patient);
     }
   };

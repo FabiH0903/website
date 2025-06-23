@@ -29,11 +29,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const line = `${isPatient ? 'Patient' : 'Arzt'}: ${text}`;
       area.value += line + '\n';
 
-      // Speichern in patient.sections.anamnesis
+      // Speichern im Patientenprotokoll
       const patient = getCurrentPatient();
       if (patient) {
         patient.sections = patient.sections || {};
         patient.sections.anamnesis = (patient.sections.anamnesis || '') + line + '\n';
+        patient.sections.analysisProtocol = (patient.sections.analysisProtocol || '') + line + '\n';
         savePatient(patient);
       }
     };
@@ -58,19 +59,3 @@ document.addEventListener('DOMContentLoaded', () => {
   updateUI();
   status.textContent = 'Bereit.';
 });
-
-// Hilfsfunktionen (aus common.js oder dictation-spezifisch)
-function getCurrentPatient() {
-  const id = parseInt(localStorage.getItem('currentPatientId'), 10);
-  const list = JSON.parse(localStorage.getItem('patientRecords') || '[]');
-  return list.find(p => p.id === id);
-}
-
-function savePatient(p) {
-  const list = JSON.parse(localStorage.getItem('patientRecords') || '[]');
-  const idx = list.findIndex(x => x.id === p.id);
-  if (idx !== -1) {
-    list[idx] = p;
-    localStorage.setItem('patientRecords', JSON.stringify(list));
-  }
-}
