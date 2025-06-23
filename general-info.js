@@ -111,6 +111,7 @@ function handleNewPatientSubmit(e) {
   renderGeneralInfo(p);
   hideNewPatientModal();
   f.reset();
+
 }
 
 // Archiviert aktuellen Patienten
