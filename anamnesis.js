@@ -2,9 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('anamnesisContainer');
-  const id = parseInt(localStorage.getItem('currentPatientId'), 10);
-  const patientList = JSON.parse(localStorage.getItem('patientRecords') || '[]');
-  const patient = patientList.find(p => p.id === id);
+  const patient = patientStore.getCurrentPatient();
 
   if (!patient) {
     container.innerHTML = '<p>Kein Patient ausgewählt.</p>';
