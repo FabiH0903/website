@@ -90,6 +90,7 @@ function hideNewPatientModal() {
 
 // Verarbeitung des Formulars
 function handleNewPatientSubmit(e) {
+  e.preventDefault();
 
   const f = e.target;
   const p = {
@@ -108,6 +109,8 @@ function handleNewPatientSubmit(e) {
   patientStore.addPatient(p);
   patientStore.setCurrentPatient(p.id);
   renderGeneralInfo(p);
+  hideNewPatientModal();
+  f.reset();
 
 }
 
