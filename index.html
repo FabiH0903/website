@@ -144,27 +144,27 @@
       padding: 100px 30px 30px 30px;
     }
   </style>
+
   <script src="patient-store.js"></script>
-  <script src="common.js"></script>
-
+  <script src="general-info.js"></script>
   <script>
-   function loadContent(page) {
-  fetch(page)
-    .then(response => response.text())
-    .then(html => {
-      document.querySelector('.main-content').innerHTML = html;
+    // Diese Funktion lädt nun NUR den HTML-Inhalt und ruft dann eine Init-Funktion auf
+    function loadContent(page, initFunction) {
+      fetch(page)
+        .then(response => response.text())
+        .then(html => {
+          document.querySelector('.main-content').innerHTML = html;
 
-      // Script dynamisch nachladen (z. B. general-info.js)
-      const scriptName = page.replace('.html', '.js');
-      const script = document.createElement('script');
-      script.src = scriptName;
-      script.onload = () => console.log(`Loaded ${scriptName}`);
-      document.body.appendChild(script);
-    })
-    .catch(error => {
-      document.querySelector('.main-content').innerHTML = '<p>Error loading page.</p>';
-    });
-}
+          // Rufe die spezifische Initialisierungsfunktion für die geladene Seite auf
+          if (typeof initFunction === 'function') {
+            initFunction();
+          }
+        })
+        .catch(error => {
+          document.querySelector('.main-content').innerHTML = '<p>Error loading page.</p>';
+          console.error("Fehler beim Laden des Inhalts:", error); // Zur Fehlerbehebung
+        });
+    }
 
     function toggleMenu() {
       const menu = document.getElementById("menuDropdown");
@@ -179,6 +179,12 @@
         }
       }
     }
+
+    // Beim Laden der Seite (DOM ready) die Standardseite laden
+    document.addEventListener('DOMContentLoaded', () => {
+      // Lädt "General Information" als Startseite
+      loadContent('general-info.html', initGeneralInfoPage);
+    });
   </script>
 </head>
 <body>
@@ -207,28 +213,26 @@
 
   <div class="sidebar">
     <div class="section-title">Patient Information</div>
-    <a class="nav-button" href="#" onclick="loadContent('general-info.html')">General Information</a>
-    <a class="nav-button" href="#" onclick="loadContent('anamnesis.html')">Anamnesis Protocol</a>
-    <a class="nav-button" href="#" onclick="loadContent('diagnosis.html')">Diagnosis Results</a>
+    <a class="nav-button" href="#" onclick="loadContent('general-info.html', initGeneralInfoPage)">General Information</a>
+    <a class="nav-button" href="#" onclick="loadContent('anamnesis.html', initAnamnesisPage)">Anamnesis Protocol</a>
+    <a class="nav-button" href="#" onclick="loadContent('diagnosis.html', initDiagnosisPage)">Diagnosis Results</a>
 
     <div class="section-title">Tools</div>
-    <a class="nav-button" href="#" onclick="loadContent('dictation.html')">Dictation</a>
-    <a class="nav-button" href="#" onclick="loadContent('editor.html')">Editor</a>
-    <a class="nav-button" href="#" onclick="loadContent('templates.html')">Templates</a>
+    <a class="nav-button" href="#" onclick="loadContent('dictation.html', initDictationPage)">Dictation</a>
+    <a class="nav-button" href="#" onclick="loadContent('editor.html', initEditorPage)">Editor</a>
+    <a class="nav-button" href="#" onclick="loadContent('templates.html', initTemplatesPage)">Templates</a>
 
     <div class="section-title">Clinical Summary</div>
-    <a class="nav-button" href="#" onclick="loadContent('treatment-plan.html')">Treatment Plan</a>
-    <a class="nav-button" href="#" onclick="loadContent('diagnosis-summary.html')">Diagnosis Summary</a>
+    <a class="nav-button" href="#" onclick="loadContent('treatment-plan.html', initTreatmentPlanPage)">Treatment Plan</a>
+    <a class="nav-button" href="#" onclick="loadContent('diagnosis-summary.html', initDiagnosisSummaryPage)">Diagnosis Summary</a>
 
     <div class="section-title">Discharge & Export</div>
-    <a class="nav-button" href="#" onclick="loadContent('letter-draft.html')">Letter Draft</a>
-    <a class="nav-button" href="#" onclick="loadContent('review.html')">Review</a>
-    <a class="nav-button" href="#" onclick="loadContent('export.html')">Export</a>
+    <a class="nav-button" href="#" onclick="loadContent('letter-draft.html', initLetterDraftPage)">Letter Draft</a>
+    <a class="nav-button" href="#" onclick="loadContent('review.html', initReviewPage)">Review</a>
+    <a class="nav-button" href="#" onclick="loadContent('export.html', initExportPage)">Export</a>
   </div>
 
   <div class="main-content">
-    <h1>Welcome to Discharge IQ</h1>
-    <p>Select a menu item from the left to begin.</p>
-  </div>
+    </div>
 </body>
 </html>
