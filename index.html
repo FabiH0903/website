@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Discharge IQ</title>
     <link rel="stylesheet" href="index.css" />
+    <script src="patient-store.js"></script>
 </head>
 <body>
     <div class="header">
         <div class="header-left">
-            <img src="logo.png" alt="Logo">
+            <img src="logo.png" alt="Discharge IQ Logo">
         </div>
         <div class="header-right">
             <div class="user-info">
@@ -17,9 +18,7 @@
             </div>
             <div class="user-icon">A</div>
             <div class="header-menu">
-                <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-                <div id="menuDropdown" class="menu-dropdown">
-                    <button>Help</button>
+                <button class="menu-toggle" id="menuToggleBtn">☰</button> <div id="menuDropdown" class="menu-dropdown" aria-hidden="true"> <button>Help</button>
                     <button>Feedback</button>
                     <button>News</button>
                     <button>Statistics</button>
@@ -56,21 +55,7 @@
         <p>Wählen Sie ein Menüelement auf der linken Seite, um zu beginnen.</p>
     </div>
 
-    <script src="patient-store.js"></script>
     <script src="common.js"></script>
-
-    <script src="general-info.js"></script>
-    <script src="anamnesis.js"></script>
-    <script src="dictation.js"></script>
-    <script src="editor.js"></script>
-    <script>
-        function initDiagnosisPage() { console.log('Diagnosis Page loaded'); }
-        function initTemplatesPage() { console.log('Templates Page loaded'); }
-        function initTreatmentPlanPage() { console.log('Treatment Plan Page loaded'); }
-        function initDiagnosisSummaryPage() { console.log('Diagnosis Summary Page loaded'); }
-        function initLetterDraftPage() { console.log('Letter Draft Page loaded'); }
-        function initReviewPage() { console.log('Review Page loaded'); }
-        function initExportPage() { console.log('Export Page loaded'); }
-    </script>
-    <script src="index.js"></script> </body>
+    <script src="index.js"></script>
+    </body>
 </html>

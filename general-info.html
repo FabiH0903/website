@@ -2,297 +2,9 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>General Information</title>
-    <style>
-        /* Allgemeine Modal-Styles, die auch in index.html sein sollten */
-        .modal {
-          display: none; /* Versteckt das Modal standardmäßig */
-          position: fixed; /* Über dem gesamten Bildschirm */
-          z-index: 2000; /* Ganz oben */
-          left: 0;
-          top: 0;
-          width: 100%;
-          height: 100%;
-          overflow: auto;
-          background-color: rgba(0,0,0,0.4); /* Dunkler Hintergrund */
-          justify-content: center; /* Zentriert Inhalt */
-          align-items: center; /* Zentriert Inhalt */
-        }
-
-        .modal-content {
-          background-color: #fefefe;
-          margin: auto;
-          padding: 20px;
-          border: 1px solid #888;
-          width: 80%;
-          max-width: 600px; /* Max-Breite für Modal-Inhalt */
-          border-radius: 10px;
-          box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-          position: relative;
-        }
-
-        .close-button {
-          color: #aaa;
-          float: right;
-          font-size: 28px;
-          font-weight: bold;
-          position: absolute;
-          right: 15px;
-          top: 10px;
-          cursor: pointer;
-        }
-
-        .close-button:hover,
-        .close-button:focus {
-          color: black;
-          text-decoration: none;
-          cursor: pointer;
-        }
-
-        .modal-list-group {
-            max-height: 250px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 5px;
-        }
-
-        .modal-list-group li {
-            padding: 8px 0;
-            cursor: pointer;
-            border-bottom: 1px dotted #eee;
-        }
-        .modal-list-group li:last-child {
-            border-bottom: none;
-        }
-        .modal-list-group li:hover {
-            background-color: #f0f0f0;
-        }
-
-        /* Styles für die "Toolbar" */
-        .toolbar {
-            margin-bottom: 1em;
-            display: flex;
-            gap: 0.5em;
-            flex-wrap: wrap; /* Ermöglicht Umbruch auf kleineren Bildschirmen */
-        }
-        .toolbar button {
-            padding: 0.5em 1em;
-            border: none;
-            border-radius: 4px;
-            color: #fff;
-            cursor: pointer;
-            transition: opacity 0.2s ease;
-        }
-        .toolbar button:hover {
-            opacity: 0.9;
-        }
-        /* Spezifische Farben für Toolbar-Buttons */
-        #toolbarNewPatientBtn { background: #4CAF50; } /* Grün */
-        #toolbarNewPatientBtn:hover { background: #45a049; }
-        #addNoteBoxBtn { background: #4a90e2; } /* Blau für Notiz-Button */
-        #addNoteBoxBtn:hover { background: #3a7bd5; }
-        #toolbarShowArchiveModalBtn { background: #4a90e2; } /* Blau */
-        #toolbarShowArchiveModalBtn:hover { background: #3a7bd5; }
-        #archiveCurrentPatientBtn { background: #e74c3c; } /* Rot */
-        #archiveCurrentPatientBtn:hover { background: #d44d62; }
-
-
-        /* Flexibleres Layout für info-container */
-        .info-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        @media (min-width:768px) {
-            .info-box.personal {
-                grid-column: span 2; /* Persönliche Info-Box nimmt 2 Spalten auf größeren Bildschirmen */
-            }
-        }
-
-        /* Allgemeine Info-Box Styles */
-        .info-box {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .info-box h3 {
-            color: #e85d75;
-            margin-top: 0;
-            margin-bottom: 15px;
-        }
-        .info-box p {
-            margin-bottom: 8px;
-        }
-        .info-box strong {
-            color: #333;
-        }
-
-        /* Patientenakte Grid-Layout */
-        .patient-details-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* Zwei Spalten */
-            gap: 10px 15px; /* Vertikaler und horizontaler Abstand */
-        }
-
-        .patient-details-grid p {
-            margin: 0; /* Entfernt Standard-Margin von p-Elementen */
-        }
-
-        .patient-details-grid .full-width {
-            grid-column: 1 / -1; /* Nimmt die volle Breite ein */
-        }
-
-        .patient-actions {
-            margin-top: 20px;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        /* Fortschrittsbalken Styles */
-        .progress-bar {
-            width: 100%;
-            height: 20px;
-            background-color: #e0e0e0;
-            border-radius: 5px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-        .progress {
-            height: 100%;
-            background-color: #d4a017;
-            width: 0%; /* Wird durch JS gesetzt */
-            text-align: center;
-            color: white;
-            line-height: 20px;
-            transition: width 0.5s ease-in-out;
-        }
-
-        /* Styles für Buttons in info-box */
-        .info-box button {
-            padding: 8px 12px;
-            background-color: #007bff; /* Blau für Standard-Buttons */
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9em;
-            margin-right: 8px;
-            transition: background-color 0.2s ease;
-        }
-        .info-box button:hover {
-            background-color: #0056b3;
-        }
-        /* Spezifische Farbe für Löschen-Button */
-        .info-box button#deletePatientBtn {
-            background-color: #dc3545; /* Rot */
-        }
-        .info-box button#deletePatientBtn:hover {
-            background-color: #c82333;
-        }
-        /* Spezifische Farbe für Abwählen-Button */
-        .info-box button#clearPatientSelectionBtn {
-            background-color: #6c757d; /* Grau */
-        }
-        .info-box button#clearPatientSelectionBtn:hover {
-            background-color: #5a6268;
-        }
-
-        /* Notizen Box Styles */
-        .info-box.notes-box {
-            grid-column: 1 / -1; /* Notizbox nimmt immer volle Breite ein */
-            margin-top: 20px;
-        }
-
-        .info-box.notes-box textarea {
-            width: calc(100% - 20px);
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-family: Arial, sans-serif;
-            font-size: 1em;
-            resize: vertical;
-            min-height: 150px;
-            margin-bottom: 10px;
-        }
-
-        .info-box.notes-box button {
-            padding: 10px 15px;
-            background-color: #e85d75; /* Deine Akzentfarbe */
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.2s ease;
-        }
-        .info-box.notes-box button:hover {
-            background-color: #d44d62;
-        }
-
-        /* Styles für neues Patientenformular */
-        #newPatientForm {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* Zwei Spalten Layout */
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        #newPatientForm label {
-            grid-column: 1 / 2; /* Label in erster Spalte */
-            align-self: center;
-            font-weight: bold; /* Labels fett */
-        }
-        #newPatientForm input,
-        #newPatientForm select,
-        #newPatientForm textarea {
-            grid-column: 2 / 3; /* Eingabefelder in zweiter Spalte */
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            width: calc(100% - 16px); /* Passt Breite an Padding an */
-            box-sizing: border-box; /* Padding und Border werden in die Breite einbezogen */
-        }
-        /* Textareas für volle Breite */
-        #newPatientForm textarea#newHistory,
-        #newPatientForm textarea#newTreatments,
-        #newPatientForm textarea#newDiagnosis {
-            grid-column: 1 / 3; /* Nimmt beide Spalten ein */
-            width: 100%;
-        }
-        #newPatientForm label[for="newHistory"],
-        #newPatientForm label[for="newTreatments"],
-        #newPatientForm label[for="newDiagnosis"] {
-            grid-column: 1 / 3; /* Labels für volle Textareas auch über beide Spalten */
-        }
-
-        #newPatientForm .actions {
-            grid-column: 1 / 3; /* Buttons in voller Breite am Ende */
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.5em;
-            margin-top: 10px;
-        }
-        #newPatientForm .actions button {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1.1em;
-            color: white;
-        }
-        #newPatientForm .actions .cancel { background: #ccc; }
-        #newPatientForm .actions .cancel:hover { background: #bbb; }
-        #newPatientForm .actions .save { background: #e85d75; }
-        #newPatientForm .actions .save:hover { background: #d44d62; }
-    </style>
+    <link rel="stylesheet" href="general-info.css">
 </head>
 <body>
     <div id="generalInfoContainer">
@@ -323,7 +35,7 @@
                 <div class="patient-actions">
                     <button id="selectPatientBtn">Patient auswählen</button>
                     <button id="clearPatientSelectionBtn" style="display:none;">Patient abwählen</button>
-                    <button id="deletePatientBtn" style="display:none;">Patient löschen</button>
+                    <button id="editPatientBtn" style="display:none;">Patientendaten bearbeiten</button> <button id="deletePatientBtn" style="display:none;">Patient löschen</button>
                 </div>
             </div>
 
@@ -338,8 +50,10 @@
 
             <div class="info-box notes-box full-width">
                 <h3>Patientennotizen</h3>
-                <textarea id="patientNotesContent" rows="10" placeholder="Hier können Sie allgemeine Notizen zum Patienten eintragen..."></textarea>
-                <button id="savePatientNotesBtn">Notizen speichern</button>
+                <div id="patientNotesContainer" class="notes-content">
+                    <textarea class="note-textarea" rows="4" placeholder="Kein Patient ausgewählt. Notizen nicht verfügbar." disabled></textarea>
+                </div>
+                <button id="savePatientNotesBtn" disabled>Notizen speichern</button>
             </div>
         </div>
 
@@ -349,15 +63,14 @@
                 <h2>Patienten auswählen</h2>
                 <input type="text" id="patientSearchInput" placeholder="Suchen nach Name oder ID..." style="width: calc(100% - 22px); padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
                 <ul id="patientList" class="modal-list-group">
-                    </ul>
+                </ul>
             </div>
         </div>
 
         <div id="newPatientModal" class="modal">
             <div class="modal-content">
                 <span class="close-button" id="closeNewPatientModal">&times;</span>
-                <h3>Neuen Patienten anlegen</h3>
-                <form id="newPatientForm">
+                <h3 id="newPatientModalTitle">Neuen Patienten anlegen</h3> <form id="newPatientForm">
                     <label for="newFirstName">Vorname</label>
                     <input id="newFirstName" name="first" required>
 
@@ -368,7 +81,7 @@
                     <input id="newDob" name="dob" type="date" required>
 
                     <label for="newGender">Geschlecht:</label>
-                    <select id="newGender" required>
+                    <select id="newGender" name="gender" required>
                         <option value="">Wählen Sie...</option>
                         <option value="männlich">Männlich</option>
                         <option value="weiblich">Weiblich</option>
@@ -376,7 +89,7 @@
                     </select>
 
                     <label for="newContact">Kontakt:</label>
-                    <input type="text" id="newContact" placeholder="Telefon oder E-Mail" required>
+                    <input type="text" id="newContact" name="contact" placeholder="Telefon oder E-Mail" required>
 
                     <label for="newBirthplace">Geburtsort</label>
                     <input id="newBirthplace" name="birthplace">
@@ -388,7 +101,7 @@
                     <input id="newInsurance" name="insurance">
 
                     <label for="newDiagnosis">Vorläufige Diagnose:</label>
-                    <textarea id="newDiagnosis" rows="3" placeholder="Kurze Beschreibung"></textarea>
+                    <textarea id="newDiagnosis" name="diagnosis" rows="3" placeholder="Kurze Beschreibung"></textarea>
 
                     <label for="newHistory">Aktuelles Krankheitsbild</label>
                     <textarea id="newHistory" name="history" rows="3"></textarea>
@@ -408,12 +121,12 @@
             <div class="modal-content">
                 <span class="close-button" id="closeArchiveModal">&times;</span>
                 <h3>Vorlagen</h3>
-                <ul id="templateList">
-                    </ul>
+                <ul id="templateList" class="modal-list-group">
+                </ul>
                 <hr>
                 <h3>Archivierte Patienten</h3>
-                <ul id="archiveList">
-                    </ul>
+                <ul id="archiveList" class="modal-list-group">
+                </ul>
                 <button id="archiveModalCloseBtn">Schließen</button>
             </div>
         </div>
