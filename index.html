@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Discharge IQ</title>
   <style>
+    /* Allgemeine Styles für Body, Header und Sidebar */
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -143,15 +144,283 @@
       margin-left: 200px;
       padding: 100px 30px 30px 30px;
     }
+
+    /* Styles für dynamisch geladenen Inhalt (z.B. general-info.html, dictation.html, anamnesis.html) */
+    .info-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .info-box {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .info-box h3 {
+      color: #e85d75;
+      margin-top: 0;
+      margin-bottom: 15px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .progress {
+      height: 20px;
+      background-color: #d4a017;
+      width: 0%; /* Wird durch JS gesetzt */
+      text-align: center;
+      color: white;
+      line-height: 20px;
+      transition: width 0.5s ease-in-out;
+    }
+
+    .modal {
+      display: none; /* Versteckt das Modal standardmäßig */
+      position: fixed; /* Über dem gesamten Bildschirm */
+      z-index: 2000; /* Ganz oben */
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4); /* Dunkler Hintergrund */
+      justify-content: center; /* Zentriert Inhalt */
+      align-items: center; /* Zentriert Inhalt */
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 600px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      position: relative;
+    }
+
+    .close-button {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      position: absolute;
+      right: 15px;
+      top: 10px;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .modal-list-group {
+        max-height: 250px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-top: 10px;
+        border-radius: 5px;
+    }
+
+    .modal-list-group li {
+        padding: 8px 0;
+        cursor: pointer;
+        border-bottom: 1px dotted #eee;
+    }
+    .modal-list-group li:last-child {
+        border-bottom: none;
+    }
+    .modal-list-group li:hover {
+        background-color: #f0f0f0;
+    }
+
+    #newPatientForm {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    #newPatientForm label {
+        grid-column: 1 / 2;
+        align-self: center;
+    }
+
+    #newPatientForm input,
+    #newPatientForm select, /* NEU: select-Feld für Geschlecht */
+    #newPatientForm textarea {
+        grid-column: 2 / 3;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    #newPatientForm textarea {
+        grid-column: 1 / 3; /* Für die volle Breite */
+    }
+
+    #newPatientForm button[type="submit"] {
+        grid-column: 1 / 3;
+        padding: 10px 15px;
+        background-color: #e85d75;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1.1em;
+        margin-top: 10px;
+    }
+
+    #newPatientForm button[type="submit"]:hover {
+        background-color: #d44d62;
+    }
+
+    /* NEU: Styles für den Button "Neuen Patienten anlegen" */
+    #createNewPatientBtn {
+        margin-top: 20px;
+        padding: 10px 15px;
+        background-color: #4CAF50; /* Grün */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color 0.2s ease;
+    }
+    #createNewPatientBtn:hover {
+        background-color: #45a049; /* Dunkleres Grün beim Hover */
+    }
+
+    /* Aktualisierte Styles für Buttons in info-box */
+    .info-box button {
+        padding: 8px 12px;
+        background-color: #007bff; /* Blau für Standard-Buttons */
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9em;
+        margin-right: 8px;
+        transition: background-color 0.2s ease;
+    }
+    .info-box button:hover {
+        background-color: #0056b3;
+    }
+    /* Spezifische Farbe für Löschen-Button */
+    .info-box button#deletePatientBtn {
+        background-color: #dc3545; /* Rot */
+    }
+    .info-box button#deletePatientBtn:hover {
+        background-color: #c82333;
+    }
+    /* Spezifische Farbe für Abwählen-Button */
+    .info-box button#clearPatientSelectionBtn {
+        background-color: #6c757d; /* Grau */
+    }
+    .info-box button#clearPatientSelectionBtn:hover {
+        background-color: #5a6268;
+    }
+
+    /* Styles für Diktat-Funktion (aus dictation.html) */
+    #dictationContainer {
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    #dictationContainer button {
+      padding: 10px 15px;
+      background-color: #e85d75;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      margin-right: 10px;
+    }
+    #dictationContainer button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    #dictationResults {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+    #dictationResults h3 {
+      color: #e85d75;
+      margin-bottom: 5px;
+    }
+    #transcribedTextOutput {
+      white-space: pre-wrap; /* Behält Zeilenumbrüche im Text bei */
+      font-family: Arial, sans-serif;
+      resize: vertical;
+    }
+
+    /* Styles für Anamnese (aus anamnesis.html) */
+    #anamnesisContainer {
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .anamnesis-box textarea {
+        width: calc(100% - 20px);
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-family: Arial, sans-serif;
+        font-size: 1em;
+        resize: vertical;
+        min-height: 200px;
+    }
+    .anamnesis-box button {
+        margin-top: 10px;
+        padding: 10px 15px;
+        background-color: #e85d75;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+    }
+    .anamnesis-box button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
   </style>
 
   <script src="patient-store.js"></script>
+  <script src="common.js"></script>
   <script src="general-info.js"></script>
+  <script src="anamnesis.js"></script>
+  <script src="dictation.js"></script>
   <script>
-    // Diese Funktion lädt nun NUR den HTML-Inhalt und ruft dann eine Init-Funktion auf
+    // Diese Funktion lädt NUR den HTML-Inhalt in den main-content Bereich.
+    // Danach ruft sie eine spezifische Initialisierungsfunktion auf.
     function loadContent(page, initFunction) {
       fetch(page)
-        .then(response => response.text())
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.text();
+        })
         .then(html => {
           document.querySelector('.main-content').innerHTML = html;
 
@@ -161,16 +430,18 @@
           }
         })
         .catch(error => {
-          document.querySelector('.main-content').innerHTML = '<p>Error loading page.</p>';
-          console.error("Fehler beim Laden des Inhalts:", error); // Zur Fehlerbehebung
+          document.querySelector('.main-content').innerHTML = '<p>Fehler beim Laden der Seite.</p>';
+          console.error("Fehler beim Laden des Inhalts:", error);
         });
     }
 
+    // Funktion zum Umschalten des Kopfleisten-Menüs
     function toggleMenu() {
       const menu = document.getElementById("menuDropdown");
       menu.style.display = menu.style.display === "block" ? "none" : "block";
     }
 
+    // Schließt das Menü, wenn außerhalb geklickt wird
     window.onclick = function(e) {
       if (!e.target.matches('.menu-toggle')) {
         const menu = document.getElementById("menuDropdown");
@@ -233,6 +504,8 @@
   </div>
 
   <div class="main-content">
-    </div>
+    <h1>Willkommen bei Discharge IQ</h1>
+    <p>Wählen Sie ein Menüelement auf der linken Seite, um zu beginnen.</p>
+  </div>
 </body>
 </html>

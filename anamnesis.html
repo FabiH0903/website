@@ -1,21 +1,9 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <title>Anamnese</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <div class="toolbar">
-    <h2>Anamnese</h2>
-  </div>
-
-  <div id="anamnesisContainer">
-    <p>Kein Patient ausgewählt.</p>
-  </div>
-
-  <script src="patient-store.js"></script>
-  <script src="common.js"></script>
-  <script src="anamnesis.js"></script>
-</body>
-</html>
+<div id="anamnesisContainer">
+    <h2>Anamneseprotokoll</h2>
+    <p>Patient: <span id="anamnesisPatientName">Kein Patient ausgewählt</span></p>
+    <div class="anamnesis-box">
+        <h3>Notizen zur Anamnese:</h3>
+        <textarea id="anamnesisContent" rows="20" cols="80"></textarea>
+        <button id="saveAnamnesisContentBtn">Änderungen speichern</button>
+    </div>
+</div>

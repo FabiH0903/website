@@ -1,34 +1,55 @@
-<!-- dictation.html -->
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <title>Diktierfunktion</title>
-  <style>
-    body { font-family: Arial,sans-serif; padding:20px; background:#f9f9f9; }
-    .dictate-card { background:#fff; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1); padding:20px; max-width:600px; margin:auto; }
-    .dictate-card h2 { margin-top:0; color:#e85d75; }
-    #transcript { width:100%; height:150px; padding:10px; border:1px solid #ccc; border-radius:4px; resize:none; }
-    .controls { display:flex; gap:10px; margin-top:10px; }
-    .controls button { flex:1; padding:10px; border:none; border-radius:4px; font-size:1em; cursor:pointer; }
-    .start { background:#8e8df0; color:#fff; }
-    .stop  { background:#e85d75; color:#fff; }
-    #status { margin-top:10px; font-style:italic; }
-  </style>
-</head>
-<body>
-  <div class="dictate-card">
-    <h2>Diktierfunktion</h2>
-    <textarea id="transcript" placeholder="Hier erscheint das Transkript…" readonly></textarea>
-    <div class="controls">
-      <button id="startBtn" class="start">🎤 Aufnahme starten</button>
-      <button id="stopBtn"  class="stop" disabled>■ Stoppen</button>
-    </div>
-    <p id="status">Bereit.</p>
-  </div>
-  <script src="patient-store.js"></script>
-  <script src="dictation.js"></script>
-  <script src="common.js"></script>
+<div id="dictationContainer">
+    <h2>Diktat-Funktion (Browser-basiert)</h2>
+    <p>Aktueller Patient: <span id="currentPatientName">Kein Patient ausgewählt</span></p>
 
-</body>
-</html>
+    <p>Hinweis: Diese Diktatfunktion nutzt die Spracherkennung Ihres Browsers. Qualität und Funktionsumfang (z.B. Sprechererkennung) können variieren.</p>
+
+    <button id="startDictationBtn">Aufnahme starten</button>
+    <button id="stopDictationBtn" style="display:none;">Aufnahme stoppen</button>
+    <button id="cancelDictationBtn" style="display:none;">Abbrechen</button>
+
+    <div id="dictationStatus" style="margin-top: 10px; font-weight: bold;"></div>
+    <div id="dictationResults" style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px;">
+        <h3>Transkribierter Text:</h3>
+        <textarea id="transcribedTextOutput" rows="10" cols="60" readonly style="width: 100%;"></textarea>
+        <button id="saveAnamnesisBtn" style="margin-top: 10px; display:none;">In Anamnese speichern</button>
+    </div>
+</div>
+
+<style>
+    /* Füge diese Styles direkt hier ein oder in deine zentrale CSS-Datei */
+    #dictationContainer {
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    #dictationContainer button {
+      padding: 10px 15px;
+      background-color: #e85d75;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      margin-right: 10px;
+    }
+    #dictationContainer button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    #dictationResults {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+    #dictationResults h3 {
+      color: #e85d75;
+      margin-bottom: 5px;
+    }
+    #transcribedTextOutput {
+      white-space: pre-wrap; /* Behält Zeilenumbrüche im Text bei */
+      font-family: Arial, sans-serif;
+      resize: vertical;
+    }
+</style>

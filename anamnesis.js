@@ -1,44 +1,36 @@
 // anamnesis.js
 
-document.addEventListener('DOMContentLoaded', () => {
-  const container = document.getElementById('anamnesisContainer');
-  const patient = patientStore.getCurrentPatient();
+let currentAnamnesisPatient = null;
 
-  if (!patient) {
-    container.innerHTML = '<p>Kein Patient ausgewählt.</p>';
-    return;
-  }
+function initAnamnesisPage() {
+    console.log("initAnamnesisPage called.");
 
-  // Header
-  container.innerHTML = `<h3>${patient.first} ${patient.last}</h3>`;
+    const anamnesisPatientNameElem = document.getElementById('anamnesisPatientName');
+    const anamnesisContentElem = document.getElementById('anamnesisContent');
+    const saveAnamnesisContentBtn = document.getElementById('saveAnamnesisContentBtn');
 
-  // Originales Transkript
-  const notes = patient.sections?.anamnesis || '';
-  const section = document.createElement('div');
-  section.className = 'patient-section';
-  section.innerHTML = `
-    <h4>Anamnese-Protokoll</h4>
-    <p>${notes.replace(/\n/g, '<br>') || '<em>Keine Einträge.</em>'}</p>
-  `;
-  container.appendChild(section);
+    currentAnamnesisPatient = patientStore.getCurrentPatient();
 
-  // KI-Zusammenfassung holen
-  fetch('/api/summarize', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text: notes })
-  })
-    .then(res => res.json())
-    .then(json => {
-      const summ = document.createElement('div');
-      summ.className = 'patient-section';
-      summ.innerHTML = `
-        <h4>Kurzzusammenfassung</h4>
-        <p>${json.summary}</p>
-      `;
-      container.appendChild(summ);
-    })
-    .catch(err => {
-      console.error('Summary-Fehler:', err);
-    });
-});
+    if (currentAnamnesisPatient) {
+        anamnesisPatientNameElem.textContent = `${currentAnamnesisPatient.first} ${currentAnamnesisPatient.last}`;
+        anamnesisContentElem.value = currentAnamnesisPatient.sections.anamnesis || '';
+        anamnesisContentElem.disabled = false; // Textarea aktivieren
+        saveAnamnesisContentBtn.disabled = false;
+    } else {
+        anamnesisPatientNameElem.textContent = "Kein Patient ausgewählt.";
+        anamnesisContentElem.value = "Bitte wählen Sie zuerst einen Patienten aus.";
+        anamnesisContentElem.disabled = true; // Textarea deaktivieren
+        saveAnamnesisContentBtn.disabled = true;
+    }
+
+    saveAnamnesisContentBtn.onclick = () => {
+        if (currentAnamnesisPatient) {
+            currentAnamnesisPatient.sections.anamnesis = anamnesisContentElem.value;
+            patientStore.updatePatient(currentAnamnesisPatient);
+            alert('Anamnese erfolgreich gespeichert!');
+        }
+    };
+}
+
+// Globalisieren der Init-Funktion
+window.initAnamnesisPage = initAnamnesisPage;
