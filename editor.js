@@ -18,14 +18,14 @@ function initEditorPage() {
     const printDraftBtn = document.getElementById('printDraftBtn');
     const exportTextBtn = document.getElementById('exportTextBtn');
 
-    // NEU: Toolbar-Elemente
+    // Toolbar-Elemente
     const editorToolbar = document.getElementById('editorToolbar');
     const fontSelect = document.getElementById('fontSelect');
     const fontSizeSelect = document.getElementById('fontSizeSelect');
-    const foreColorPicker = document.getElementById('foreColorPicker'); // NEU: Textfarbe
-    const backColorPicker = document.getElementById('backColorPicker'); // NEU: Hintergrundfarbe
+    const foreColorPicker = document.getElementById('foreColorPicker');
+    const backColorPicker = document.getElementById('backColorPicker');
 
-    const patient = patientStore.getCurrentPatient();
+    const patient = patientStore.getCurrentPatient(); // Assuming patientStore is globally available
 
     // Variable, um die aktuelle Auswahl zu speichern, da execCommand den Fokus verlieren kann
     let savedRange = null;
@@ -138,154 +138,91 @@ function initEditorPage() {
 
 
     // Funktion zum Laden eines KI-generierten Entwurfs (Beispieltexte)
-    // Habe hier die HTML-Tags direkt in den Beispieltexten eingefügt,
-    // um die Anwendung der Formatierungen zu demonstrieren.
-        function loadKiDraft() {
+    function loadKiDraft() {
         if (!patient) {
             alert('Please select a patient on the "General Information" page first to load an AI draft.');
             return;
         }
 
-        const patientName = `${patient.first || '[First Name]'} ${patient.last || '[Last Name]'}`;
+        // Default values for patient data if not available
+        const patientName = `${patient.first || '[Vorname]'} ${patient.last || '[Nachname]'}`;
         const patientDob = patient.dob || '[DD.MM.YYYY]';
-        const patientId = patient.id || '[Patient ID]';
-        const patientGender = patient.gender || '[Gender]';
-        const patientDiagnosis = patient.diagnosis || '[Preliminary Diagnosis]';
-        const patientMainComplaint = patient.mainComplaint || '[Main Complaint]';
+        const patientId = patient.id || '[Patienten-ID]';
+        const patientGender = patient.gender || '[Geschlecht]';
+        const patientContact = patient.contact || '[Kontaktinformation]';
+        const patientCity = patient.city || '[Stadt]';
+        const patientBirthplace = patient.birthplace || '[Geburtsort]';
+        const patientInsurance = patient.insurance || '[Krankenkasse]';
+        const preliminaryDiagnosis = patient.diagnosis || '[Vorläufige Diagnose]'; // From general info
+        const currentHistory = patient.history || '[Aktuelles Krankheitsbild]'; // From general info
+        const pastTreatments = patient.treatments || '[Bisherige Behandlungen]'; // From general info
 
-        editorHeader.innerHTML = `
-            <b><span style="font-size: 16px;">${patientName}</span></b>, born on ${patientDob} (ID: ${patientId})<br>
-            Address: ${patient.address || '[Patient Address]'}<br>
-            Phone: ${patient.phone || '[Patient Phone]'}<br>
-            <br>
-            <span style="font-size: 18px; color: #e85d75;"><b>Subject:</b> Discharge Letter for ${patientName}</span><br>
-            <br>
-            Dear Colleague,
+        // Example "flowing" text for the different sections
+        const exampleHeader = `
+            ${patientName}, geboren am ${patientDob} (ID: ${patientId})\n
+            Kontakt: ${patientContact}\n
+            Wohnort: ${patientCity}, Geburtsort: ${patientBirthplace}\n
+            Krankenkasse: ${patientInsurance}\n
+            \n
+            <b>Betreff:</b> Arztbrief für ${patientName} nach stationärem Aufenthalt\n
+            \n
+            Sehr geehrte Kolleginnen und Kollegen,
+            \n
+            wir berichten über Herrn/Frau ${patientName}, der/die vom ${new Date().toLocaleDateString('de-DE')} bis ${new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toLocaleDateString('de-DE')} in unserer Klinik für [Fachbereich, z.B. Innere Medizin] aufgrund von ${currentHistory.toLowerCase()} stationär behandelt wurde.
         `;
 
-        editorAnamnesis.innerHTML = patient.sections.anamnesis || `
-            <b><u>Anamnesis:</u></b><br>
-            The ${patientGender === 'male' ? 'patient' : 'patient'} presents with a chief complaint of <i><b>${patientMainComplaint}</b></i>, which started approximately 3 days ago.
-            <br>
-            <b>Current Symptoms:</b>
-            <ul>
-                ${patient.currentSymptoms.map(s => `<li>${s}</li>`).join('') || '<li>No specific current symptoms reported.</li>'}
-            </ul>
-            <b>Past Medical History:</b>
-            <ul>
-                ${patient.pastMedicalHistory.map(h => `<li>${h}</li>`).join('') || '<li>No significant past medical history.</li>'}
-            </ul>
-            <b>Medications:</b>
-            <ul>
-                ${patient.medications.map(m => `<li>${m}</li>`).join('') || '<li>No regular medications.</li>'}
-            </ul>
-            <b>Allergies:</b> ${patient.allergies.join(', ') || 'None known'}.
-            <br>
-            Social history: [Social history details]. Family history: [Family history details].
+        const exampleAnamnesis = `
+            <b><u>Anamnese:</u></b>\n
+            Der/Die Patient/in stellte sich mit seit [Dauer, z.B. 3 Tagen] bestehenden Beschwerden im Sinne von ${currentHistory.toLowerCase()} vor. Begleitend traten [weitere Symptome, z.B. Fieber bis 38.5°C, Schüttelfrost, ausgeprägtes Krankheitsgefühl] auf. Die Vorerkrankungen umfassen [relevante Vorerkrankungen, z.B. arterielle Hypertonie, Diabetes mellitus Typ 2]. Aktuelle Medikation: [Liste aktueller Medikamente]. Allergien: [Bekannte Allergien, z.B. Penicillin]. Sozialanamnese: [Kurze Angaben zur Sozialanamnese]. Familienanamnese: [Kurze Angaben zur Familienanamnese]. Frühere Behandlungen für ähnliche Beschwerden: ${pastTreatments}.
         `;
 
-        // Updated Diagnosis Section for more detail
-        editorDiagnosis.innerHTML = patient.sections.diagnosis || `
-            <b><u>Primary Diagnosis:</u></b><br>
-            <ul>
-                <li><b>Acute Tonsillitis</b> (ICD-10: J03.9) - Based on clinical presentation of fever, dysphagia, and inflamed tonsils with exudate.</li>
-                ${patientDiagnosis && patientDiagnosis !== 'Acute Tonsillitis' && patientDiagnosis !== '[Preliminary Diagnosis]' ? `<li>Secondary Diagnosis: ${patientDiagnosis} (Preliminary)</li>` : ''}
-                <li>Associated Condition: Mild Dehydration (E86.0) - Due to reduced fluid intake from dysphagia.</li>
-            </ul>
-            <b><u>Differential Diagnoses Considered:</u></b>
-            <ul>
-                <li>Peritonsillar abscess (ruled out by lack of unilateral swelling/trismus)</li>
-                <li>Infectious Mononucleosis (awaiting specific lab results)</li>
-            </ul>
+        const exampleDiagnosis = `
+            <b><u>Diagnose:</u></b>\n
+            Wir diagnostizierten bei Herrn/Frau ${patientName} eine/n <b>${preliminaryDiagnosis || 'akute Tonsillitis'}</b> (ICD-10: J03.9), bestätigt durch die klinische Symptomatik und die bei uns erhobenen Befunde. Als Nebendiagnose wurde eine leichte Exsikkose (E86.0) aufgrund reduzierter Trinkmengen festgestellt. Differentialdiagnostisch wurden ein Peritonsillarabszess und eine infektiöse Mononukleose erwogen, konnten aber weitgehend ausgeschlossen werden.
         `;
 
-        editorFindings.innerHTML = `
-            <b><u>Findings:</u></b><br>
-            <ul>
-                <li>Clinical Examination: ${patientGender === 'male' ? 'Patient' : 'Patient'} appears ill but is alert and oriented. Oral examination reveals significantly reddened pharynx with enlarged, hyperemic tonsils exhibiting bilateral purulent exudate. No signs of airway obstruction.</li>
-                <li>Palpation: Tender cervical lymphadenopathy noted bilaterally (jugulodigastric chain).</li>
-                <li>Vital Signs: BP 120/80 mmHg, HR 88 bpm, RR 16/min, Temp 37.2°C (post-antipyretic).</li>
-                <li>Laboratory Results:
-                    <ul>
-                        ${patient.labResults.map(l => `<li><b>${l.test}:</b> ${l.value} (Ref: ${l.ref})</li>`).join('') || '<li>No specific lab results available.</li>'}
-                        <li>Rapid Strep Test: Negative</li>
-                    </ul>
-                </li>
-                <li>Imaging Results:
-                    <ul>
-                        ${patient.imagingResults.map(i => `<li><b>${i.modality}:</b> ${i.finding}</li>`).join('') || '<li>No imaging performed.</li>'}
-                    </ul>
-                </li>
-            </ul>
+        const exampleFindings = `
+            <b><u>Befunde:</u></b>\n
+            Bei Aufnahme präsentierte sich der/die Patient/in in reduziertem Allgemeinzustand, jedoch bei klarem Bewusstsein und orientiert. Die körperliche Untersuchung zeigte [wichtige körperliche Befunde, z.B. stark geröteten Pharynx mit beidseitigem eitrigem Exsudat an den Tonsillen, zervikale Lymphadenopathie bds.]. Vitalparameter: [z.B. RR 125/85 mmHg, Puls 78/min, AF 14/min, Temp 37.8°C]. Laborchemisch fielen auf: [wichtige Laborwerte, z.B. CRP 85 mg/L (Ref: <5), Leukozyten 14.5 G/L (Ref: 4-10)]. Ein Schnelltest auf Streptokokken war negativ. Bildgebende Diagnostik wurde nicht durchgeführt.
         `;
 
-        // NEW: Treatment Plan content
-        editorTherapy.innerHTML = patient.sections.treatmentPlan || `
-            <b><u>Treatment Plan & Recommendations:</u></b><br>
-            The patient was initiated on conservative management and symptomatic relief.
-            <ol>
-                <li><b>Medication:</b>
-                    <ul>
-                        <li>Paracetamol 500mg, 1 tablet orally every 6 hours as needed for fever/pain (max 4 doses/day).</li>
-                        <li>Consider Ibuprofen 400mg if pain persists (check for contraindications).</li>
-                    </ul>
-                </li>
-                <li><b>Supportive Care:</b>
-                    <ul>
-                        <li>Encourage adequate oral fluid intake to prevent dehydration.</li>
-                        <li>Warm saline gargles or chamomile gargles 3-4 times daily for throat discomfort.</li>
-                        <li>Rest and avoidance of strenuous activities.</li>
-                    </ul>
-                </li>
-                <li><b>Monitoring:</b>
-                    <ul>
-                        <li>Monitor for worsening symptoms (e.g., increased difficulty swallowing, shortness of breath, spreading redness/swelling).</li>
-                        <li>Educate on signs of dehydration.</li>
-                    </ul>
-                </li>
-                <li><b>Follow-up:</b>
-                    <ul>
-                        <li>Return to clinic in 48 hours for re-evaluation if symptoms do not improve or worsen.</li>
-                        <li>Consider antibiotic therapy (e.g., Amoxicillin) if bacterial infection is confirmed (e.g., by culture) or clinical suspicion remains high.</li>
-                    </ul>
-                </li>
-            </ol>
+        const exampleTherapy = `
+            <b><u>Therapie und Medikation:</u></b>\n
+            Die Therapie erfolgte konservativ und symptomatisch. Der/Die Patient/in erhielt [Medikament 1, z.B. Ibuprofen 400mg 1-1-1 bei Bedarf] zur Schmerz- und Fieberkontrolle sowie [Medikament 2, z.B. Paracetamol 500mg bei Bedarf] und [weitere Maßnahmen, z.B. ausreichend Flüssigkeitszufuhr, Gurgeln mit Salbeilösung]. Eine antibiotische Therapie wurde nach Ausschluss einer bakteriellen Superinfektion nicht initiiert.
         `;
 
-        // NEW: Prognosis & Further Course (more detailed)
-        editorPrognosis.innerHTML = `
-            <b><u>Prognosis & Further Course:</u></b><br>
-            The overall prognosis is good with conservative management. Acute tonsillitis typically resolves within 7-10 days.
-            <br>
-            <b><u>Recommendations for Patient:</u></b>
-            <ul>
-                <li>Maintain good oral hygiene.</li>
-                <li>Avoid irritants (e.g., smoking, very hot/cold foods).</li>
-                <li>Complete any prescribed medication course, even if symptoms improve earlier.</li>
-                <li>Strict adherence to follow-up instructions is important for ensuring full recovery and ruling out complications.</li>
-                <li>If new symptoms develop (e.g., rash, joint pain, significant swelling of the neck), seek immediate medical attention.</li>
-            </ul>
-            Further diagnostic tests (e.g., throat swab for culture) may be considered if symptoms persist or atypical presentations arise.
+        const examplePrognosis = `
+            <b><u>Prognose und weiteres Vorgehen:</u></b>\n
+            Unter der eingeleiteten Therapie zeigte sich eine rasche Besserung des Allgemeinzustandes und der lokalen Symptomatik. Der/Die Patient/in wurde heute in gutem Allgemeinzustand entlassen. Wir empfehlen die Fortführung der symptomatischen Therapie für weitere [Dauer, z.B. 3-5 Tage] und eine Wiedervorstellung beim Hausarzt in [Dauer, z.B. 7 Tagen] zur Kontrolle des Verlaufs und Ausschluss von Komplikationen. Bei Verschlechterung des Zustandes oder Auftreten neuer Symptome bitten wir um umgehende erneute Vorstellung.
         `;
 
-        editorClosing.innerHTML = `
-            Sincerely,<br>
-            <br>
-            Dr. [Doctor's Name]<br>
-            [Practice Name]<br>
-            <span style="background-color: #FFFF00;">[Date: ${new Date().toLocaleDateString('en-US')}]</span>
+        const exampleClosing = `
+            Mit freundlichen Grüßen,\n
+            \n
+            Dr. [Name des behandelnden Arztes/Ärztin]\n
+            [Name der Klinik/Praxis]\n
+            Datum: ${new Date().toLocaleDateString('de-DE')}
         `;
 
-        alert('Example AI draft loaded. Please review and adjust.');
-        updateToolbarState(); // Update toolbar status after loading
+        editorHeader.innerHTML = exampleHeader.trim();
+        editorAnamnesis.innerHTML = exampleAnamnesis.trim();
+        editorDiagnosis.innerHTML = exampleDiagnosis.trim();
+        editorFindings.innerHTML = exampleFindings.trim();
+        editorTherapy.innerHTML = exampleTherapy.trim();
+        editorPrognosis.innerHTML = examplePrognosis.trim();
+        editorClosing.innerHTML = exampleClosing.trim();
+
+        alert('Beispiel-Arztbrief-Entwurf geladen. Bitte überprüfen und anpassen.');
+        updateToolbarState(); // Toolbar-Status nach dem Laden aktualisieren
     }
-    // Funktion zum Speichern des Entwurfs (im Browser-Speicher) - unverändert
+    // Funktion zum Speichern des Entwurfs (im Browser-Speicher)
     function saveDraft() {
         if (!patient) {
             alert('Kein Patient ausgewählt. Entwurf kann nicht gespeichert werden.');
             return;
         }
 
+        // Store HTML content of each editable box
         patient.sections.letterDraft = JSON.stringify({
             header: editorHeader.innerHTML,
             anamnesis: editorAnamnesis.innerHTML,
@@ -300,7 +237,7 @@ function initEditorPage() {
         alert('Arztbrief-Entwurf gespeichert!');
     }
 
-    // Funktion zum Laden eines gespeicherten Entwurfs - unverändert
+    // Funktion zum Laden eines gespeicherten Entwurfs
     function loadSavedDraft() {
         if (patient && patient.sections.letterDraft) {
             try {
@@ -315,29 +252,31 @@ function initEditorPage() {
                 updateToolbarState(); // Toolbar-Status nach dem Laden aktualisieren
             } catch (e) {
                 console.error("Fehler beim Parsen des gespeicherten Entwurfs:", e);
-                // Fallback für alte, nicht-JSON-basierte letterDrafts
-                editorAnamnesis.innerHTML = patient.sections.letterDraft;
-                alert('Gespeicherter Entwurf konnte nicht vollständig geladen werden (möglicherweise altes Format).');
+                alert('Gespeicherter Entwurf konnte nicht vollständig geladen werden (möglicherweise altes Format oder Fehler beim Parsen).');
             }
+        } else if (patient) {
+             // If no specific letterDraft exists, but patient is selected, load some initial AI content
+             loadKiDraft(); // Load an example AI draft
         }
     }
 
-    // Funktion zum Drucken / Exportieren als PDF - unverändert
+
+    // Funktion zum Drucken / Exportieren als PDF
     function printDraft() {
         window.print();
     }
 
-    // Funktion zum Exportieren als reiner Text - unverändert
+    // Funktion zum Exportieren als reiner Text
     function exportText() {
         let fullText = '';
         const sections = [
             { label: 'Briefkopf & Patientendaten', element: editorHeader },
-            { label: 'Anamnesis', element: editorAnamnesis },
-            { label: 'Diagnosis', element: editorDiagnosis },
+            { label: 'Anamnese', element: editorAnamnesis },
+            { label: 'Diagnose', element: editorDiagnosis },
             { label: 'Befunde', element: editorFindings },
             { label: 'Therapie & Medikation', element: editorTherapy },
             { label: 'Prognose & Weiteres Vorgehen', element: editorPrognosis },
-            { label: 'Grußformel & Unterschrift', element: editorClosing }
+            { label: 'Schlussformel & Unterschrift', element: editorClosing }
         ];
 
         sections.forEach(section => {
@@ -349,7 +288,7 @@ function initEditorPage() {
 
         if (fullText) {
             const blob = new Blob([fullText], { type: 'text/plain;charset=utf-8' });
-            const patientNameForFile = patient ? `${patient.first}_${patient.last}` : 'Arztbrief';
+            const patientNameForFile = patient ? `${patient.first || 'Unbekannt'}_${patient.last || 'Patient'}` : 'Arztbrief';
             const filename = `Arztbrief_${patientNameForFile}_${new Date().toLocaleDateString('de-DE').replace(/\./g, '-')}.txt`;
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
@@ -371,7 +310,7 @@ function initEditorPage() {
     if (printDraftBtn) printDraftBtn.addEventListener('click', printDraft);
     if (exportTextBtn) exportTextBtn.addEventListener('click', exportText);
 
-    // NEU: Event Listener für die Toolbar-Buttons
+    // Event Listener für die Toolbar-Buttons
     if (editorToolbar) {
         editorToolbar.addEventListener('click', (event) => {
             const target = event.target.closest('.toolbar-btn'); // Nutze closest, um auch Kind-Elemente zu treffen
@@ -381,21 +320,21 @@ function initEditorPage() {
         });
     }
 
-    // NEU: Event Listener für Schriftart-Dropdown
+    // Event Listener für Schriftart-Dropdown
     if (fontSelect) {
         fontSelect.addEventListener('change', (event) => {
             executeCommand('fontname', event.target.value);
         });
     }
 
-    // NEU: Event Listener für Schriftgröße-Dropdown
+    // Event Listener für Schriftgröße-Dropdown
     if (fontSizeSelect) {
         fontSizeSelect.addEventListener('change', (event) => {
             executeCommand('fontsize', event.target.value);
         });
     }
 
-    // NEU: Event Listener für Textfarbe
+    // Event Listener für Textfarbe
     if (foreColorPicker) {
         foreColorPicker.addEventListener('input', (event) => { // 'input' für Echtzeit-Update beim Ziehen
             executeCommand('forecolor', event.target.value);
@@ -406,7 +345,7 @@ function initEditorPage() {
         });
     }
 
-    // NEU: Event Listener für Hintergrundfarbe
+    // Event Listener für Hintergrundfarbe
     if (backColorPicker) {
         backColorPicker.addEventListener('input', (event) => {
             executeCommand('backcolor', event.target.value);
@@ -417,7 +356,7 @@ function initEditorPage() {
         });
     }
 
-    // NEU: Event Listener für alle editable-boxes, um den Toolbar-Status zu aktualisieren
+    // Event Listener für alle editable-boxes, um den Toolbar-Status zu aktualisieren
     // Wenn der Fokus wechselt oder sich die Auswahl ändert
     document.querySelectorAll('.editable-box').forEach(box => {
         box.addEventListener('mouseup', updateToolbarState);
@@ -428,8 +367,37 @@ function initEditorPage() {
         box.addEventListener('selectionchange', updateToolbarState); // Kann auf dem document sein, aber hier auch ok
     });
 
+    // Event Listener für die rechte Sidebar, um beim Klick auf ein Referenz-Element
+    // das entsprechende Editor-Feld zu scrollen oder hervorzuheben.
+    const editorSidebarRight = document.getElementById('editorSidebarRight');
+    if (editorSidebarRight) {
+        editorSidebarRight.addEventListener('click', (event) => {
+            const refItem = event.target.closest('.ref-item');
+            if (refItem && refItem.dataset.section) {
+                const targetId = refItem.dataset.section;
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Optional: Kurzes Blinken oder Hervorheben des Elements
+                    targetElement.style.transition = 'box-shadow 0.3s ease, border-color 0.3s ease';
+                    targetElement.style.border = '1px dashed #e85d75'; // Temporäres Highlight
+                    targetElement.style.boxShadow = '0 0 0 5px rgba(232, 93, 117, 0.4)';
+                    setTimeout(() => {
+                        targetElement.style.border = '1px solid transparent'; // Reset after a short delay
+                        targetElement.style.boxShadow = '';
+                    }, 1000);
+                }
+            }
+        });
+    }
+
     // Initialen Entwurf laden, falls bereits etwas gespeichert ist, wenn der Editor zum ersten Mal geladen wird
-    loadSavedDraft();
+    // If there is a current patient and a saved letter draft, load it. Otherwise, load a new AI draft.
+    if (patientStore.getCurrentPatient() && patientStore.getCurrentPatient().sections.letterDraft) {
+        loadSavedDraft();
+    } else {
+        loadKiDraft(); // Load an example AI draft if no patient or no saved draft
+    }
     updateToolbarState(); // Initialen Toolbar-Status setzen
 }
 

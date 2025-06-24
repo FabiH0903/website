@@ -19,11 +19,13 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     padding: 30px;
     margin: 20px auto;
-    max-width: 1200px;
+    max-width: 1500px; /* Increased max-width for three columns */
     position: relative; /* Crucial for positioning the toolbar relative to this container */
-    padding-left: 220px; /* NEW: Make space for the fixed toolbar */
+    /* padding-left and padding-right will be handled by the grid layout */
     box-sizing: border-box; /* Include padding in width calculation */
     min-height: calc(100vh - 40px); /* Ensure container takes up most of viewport height */
+    display: flex; /* Use flex to push header to top and main content below */
+    flex-direction: column;
 }
 
 .editor-header {
@@ -65,13 +67,21 @@ body {
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
 }
 
-/* NEW: Fixed Vertical Toolbar */
+/* NEW: Main layout for the three columns using CSS Grid */
+.editor-main-layout-grid {
+    display: grid;
+    grid-template-columns: 200px 1fr 280px; /* Toolbar | Editor Content | Sidebar */
+    gap: 30px; /* Gap between columns */
+    flex-grow: 1; /* Allow this grid to take available vertical space */
+    position: relative; /* For fixed toolbar positioning relative to this */
+}
+
+/* Fixed Vertical Toolbar (Left Column) */
 .editor-toolbar-vertical {
-    position: fixed; /* Make it fixed relative to the viewport */
-    top: 50%; /* Start at the vertical center */
-    left: calc(50% - 400px - 100px);
-    transform: translateY(-50%); /* Move up by half its height to truly center it */
-    width: 180px; /* Fixed width */
+    position: sticky; /* Changed to sticky so it scrolls with the container on large screens, but can also be fixed relative to viewport if desired */
+    top: 20px; /* Distance from top of the parent container or viewport */
+    align-self: start; /* Align to the start of its grid cell */
+    width: 100%; /* Take full width of its grid column */
     background-color: #f0f0f0; /* Lighter background for the toolbar itself */
     border-radius: 12px; /* More rounded corners for a softer look */
     padding: 20px 15px; /* More padding */
@@ -187,95 +197,190 @@ body {
     border-radius: 5px;
 }
 
-
-/* NEW: Wrapper for the actual editor content, to handle the padding */
-.editor-main-content-wrapper {
-    /* No flex here anymore, as toolbar is fixed */
-    padding-top: 0px; /* Adjusted if needed, but the main container padding handles the left */
-}
-
-.editor-content {
+/* Middle Column: Editor Document View (Now more like flowing text) */
+.editor-document-view {
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    /* gap: 0; Removed gap to make sections appear as continuous text */
+    background-color: #fff; /* White background for the "document" itself */
+    border-radius: 8px;
+    padding: 25px 40px; /* More horizontal padding for document feel */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    min-height: 800px; /* Simulates a document page height */
+    margin-bottom: 20px; /* Space at the bottom */
+    line-height: 1.6; /* Good readability for flowing text */
+    font-size: 1em;
 }
 
 .editor-section-wrapper {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-}
-
-@media (min-width: 768px) {
-    .editor-section-wrapper {
-        grid-template-columns: 1fr 1fr;
-    }
-    .editor-section-wrapper.full-width {
-        grid-template-columns: 1fr;
-    }
+    /* No visual styling, just a container for logical sections */
+    display: block;
+    margin-bottom: 0; /* No margin between wrappers */
 }
 
 .editor-section {
-    background-color: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    /* No visual styling */
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin-bottom: 0; /* No margin between sections */
 }
 
 .editor-section label {
-    display: block;
-    font-size: 1.1em;
-    font-weight: 600;
-    color: #555;
-    margin-bottom: 15px;
-    border-bottom: 1px dashed #eee;
-    padding-bottom: 8px;
+    /* Labels are now hidden but can be used for accessibility if needed */
+    display: none; /* Hide labels */
 }
 
 .editable-box {
-    min-height: 120px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 15px;
+    min-height: 20px; /* Minimal height, content dictates actual height */
+    border: 1px solid transparent; /* Transparent border by default */
+    border-radius: 0; /* No rounded corners for continuous look */
+    padding: 0; /* No padding on the box itself, handled by parent */
     outline: none;
-    line-height: 1.6;
-    font-size: 1em;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    line-height: inherit; /* Inherit from parent .editor-document-view */
+    font-size: inherit; /* Inherit from parent .editor-document-view */
     white-space: pre-wrap;
     word-wrap: break-word;
-    overflow-y: auto;
-    max-height: 300px;
+    overflow-y: visible; /* Content should flow */
+    max-height: none; /* No max height */
+    background-color: transparent; /* Transparent background */
+    margin-bottom: 1em; /* Add paragraph-like spacing between editable boxes */
+}
+
+.editable-box:first-child {
+    margin-top: 0;
+}
+
+.editable-box:last-child {
+    margin-bottom: 0;
 }
 
 .editable-box:focus {
-    border-color: #e85d75;
-    box-shadow: 0 0 0 3px rgba(232, 93, 117, 0.2);
+    border: 1px dashed #e85d75; /* Dashed border on focus for visual cue */
+    box-shadow: 0 0 0 1px rgba(232, 93, 117, 0.2); /* Subtle shadow on focus */
+    padding: -1px; /* Adjust padding to compensate for border */
 }
 
 .editable-box:empty:not(:focus)::before {
     content: attr(data-placeholder);
-    color: #999;
-    font-style: italic;
+    color: #ccc; /* Lighter placeholder color */
+    font-style: normal; /* No italics for placeholder */
 }
 
+/* NEW: Right Sidebar for References and Warnings */
+.editor-sidebar-right {
+    background-color: #eef3f7; /* Light blueish background */
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    align-self: start; /* Align to the start of its grid cell */
+    position: sticky; /* Make it sticky so it scrolls with the container */
+    top: 20px; /* Distance from top */
+    max-height: calc(100vh - 80px); /* Limit height to viewport */
+    overflow-y: auto; /* Allow scrolling */
+}
+
+.editor-sidebar-right h3 {
+    color: #e85d75;
+    font-size: 1.5em;
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e85d75;
+    padding-bottom: 10px;
+}
+
+.sidebar-section {
+    margin-bottom: 25px;
+}
+
+.sidebar-section h4 {
+    color: #444;
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    border-bottom: 1px dashed #dde;
+    padding-bottom: 5px;
+}
+
+.sidebar-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-section li {
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    border: 1px solid #d0e0ed;
+}
+
+.ref-item.success {
+    background-color: #e6ffe6; /* Light green */
+    color: #28a745;
+    border-color: #a3e0c0;
+}
+.ref-item.warning {
+    background-color: #fff3e6; /* Light orange */
+    color: #ffc107;
+    border-color: #ffe0b2;
+}
+.ref-item.error {
+    background-color: #ffe6e6; /* Light red */
+    color: #dc3545;
+    border-color: #f5b7b7;
+}
+.ref-item.neutral {
+    background-color: #f0f8ff; /* Light blue */
+    color: #6c757d;
+    border-color: #dbe9f6;
+}
+
+.sidebar-section li:before {
+    content: '•'; /* Bullet point */
+    font-weight: bold;
+    margin-right: 8px;
+    font-size: 1.2em;
+}
+
+.ref-item.success:before { content: '✓'; color: #28a745; }
+.ref-item.warning:before { content: '⚠️'; color: #ffc107; }
+.ref-item.error:before { content: '✖'; color: #dc3545; }
+.ref-item.neutral:before { content: 'i'; color: #6c757d; }
+
+
+.sidebar-footer {
+    font-size: 0.8em;
+    color: #888;
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 15px;
+    border-top: 1px dashed #dde;
+}
+
+
 /* Responsive adjustment for smaller screens */
-@media (max-width: 1000px) { /* Adjust breakpoint for toolbar visibility */
-    .editor-container {
-        padding-left: 30px; /* Remove left padding when toolbar is not fixed beside it */
+@media (max-width: 1200px) { /* Adjust breakpoint for toolbar/sidebar visibility */
+    .editor-main-layout-grid {
+        grid-template-columns: 1fr; /* Stack columns on smaller screens */
+        gap: 20px;
     }
-    .editor-toolbar-vertical {
-        position: static; /* Toolbar becomes part of the normal flow */
+    .editor-toolbar-vertical, .editor-sidebar-right {
+        position: static; /* Toolbar and sidebar become part of the normal flow */
         transform: none; /* Remove centering transform */
         width: 100%; /* Take full width */
-        margin: 20px 0; /* Add some margin above/below */
-        flex-direction: row; /* Horizontal layout for small screens */
+        margin: 0; /* Remove specific margins */
+        flex-direction: row; /* Horizontal layout for toolbar on small screens */
         flex-wrap: wrap; /* Buttons wrap */
         justify-content: center;
         top: auto; /* Reset fixed positioning properties */
         left: auto; /* Reset fixed positioning properties */
         max-height: none; /* No max height in mobile mode */
         overflow-y: visible; /* No scrollbar in mobile mode */
+        padding: 15px; /* Adjust padding for mobile */
     }
     .toolbar-btn, .toolbar-select, .toolbar-color-picker {
         width: auto; /* Buttons adjust to content */
@@ -293,6 +398,9 @@ body {
     .toolbar-btn.separator {
         display: none; /* Hide separators in mobile mode */
     }
+    .editor-document-view {
+        min-height: auto; /* Allow content to dictate height */
+    }
 }
 
 
@@ -309,33 +417,39 @@ body {
         padding: 0;
         max-width: none;
         width: 100%;
-        display: block; /* Flexbox for printing removed */
+        display: block; /* Flexbox removed for printing */
         padding-left: 0 !important; /* Remove any padding set for toolbar */
     }
     .editor-header, .header-actions {
-        display: none;
+        display: none; /* Hide header and actions */
     }
-    .editor-main-content-wrapper {
-        display: block;
+    .editor-main-layout-grid { /* Changed from editor-main-content-wrapper */
+        display: block; /* Grid layout removed, sections stack naturally */
+        gap: 0;
     }
-    .editor-toolbar-vertical {
-        display: none; /* Toolbar completely hidden */
+    .editor-toolbar-vertical,
+    .editor-sidebar-right {
+        display: none; /* Toolbar and Sidebar completely hidden for print */
+    }
+    .editor-document-view {
+        box-shadow: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+        min-height: auto;
     }
     .editor-section-wrapper {
-        grid-template-columns: 1fr !important;
-        gap: 15px;
+        display: block;
+        margin-bottom: 0; /* No margin between wrappers for print */
     }
     .editor-section {
         border: none;
         box-shadow: none;
-        padding: 10px 0;
+        padding: 0; /* No padding in print */
+        margin-bottom: 0; /* No margin in print */
     }
     .editor-section label {
-        font-size: 1.2em;
-        margin-bottom: 5px;
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 5px;
-        color: #000;
+        display: none; /* Ensure labels are hidden in print */
     }
     .editable-box {
         border: none;
@@ -345,5 +459,10 @@ body {
         padding: 0;
         font-size: 1em;
         color: #000;
+        background-color: transparent; /* Transparent background for printing */
+        margin-bottom: 0.5em; /* Small paragraph spacing in print */
+    }
+    .editable-box:empty:not(:focus)::before {
+        content: none; /* Hide placeholders in print */
     }
 }

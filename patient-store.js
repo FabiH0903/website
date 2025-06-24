@@ -1,4 +1,3 @@
-// patient-store.js
 
 const ALL_PATIENTS_STORAGE_KEY = 'allPatients';
 const SELECTED_PATIENT_ID_STORAGE_KEY = 'selectedPatientId';

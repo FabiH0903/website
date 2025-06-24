@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editor</title>
-    <link rel="stylesheet" href="editor.css"> </head>
+    <link rel="stylesheet" href="editor.css">
+</head>
 <body>
     <div class="editor-container">
         <div class="editor-header">
@@ -17,7 +18,8 @@
             </div>
         </div>
 
-        <div class="editor-main-layout"> <div class="editor-toolbar-vertical" id="editorToolbar">
+        <div class="editor-main-layout-grid">
+            <div class="editor-toolbar-vertical" id="editorToolbar">
                 <button class="toolbar-btn" data-command="bold" title="Fett (Strg+B)"><b>B</b></button>
                 <button class="toolbar-btn" data-command="italic" title="Kursiv (Strg+I)"><i>I</i></button>
                 <button class="toolbar-btn" data-command="underline" title="Unterstrichen (Strg+U)"><u>U</u></button>
@@ -60,56 +62,96 @@
                 <button class="toolbar-btn" data-command="redo" title="Wiederherstellen (Strg+Y)">⤻</button>
             </div>
 
-            <div class="editor-content">
+            <div class="editor-document-view">
                 <div class="editor-section-wrapper">
                     <div class="editor-section">
-                        <label for="editorHeader">Patientdata</label>
-                        <div id="editorHeader" class="editable-box" contenteditable="true" data-placeholder="Hier kommt der Briefkopf und die Patientendaten rein...">
-                            </div>
-                    </div>
-
-                    <div class="editor-section">
-                        <label for="editorAnamnesis">Anamnesis</label>
-                        <div id="editorAnamnesis" class="editable-box" contenteditable="true" data-placeholder="Anamnese-Text hier eingeben oder von KI laden...">
-                            </div>
+                        <div id="editorHeader" class="editable-box" contenteditable="true" data-placeholder="Briefkopf und Patientendaten...">
+                        </div>
                     </div>
                 </div>
 
                 <div class="editor-section-wrapper">
                     <div class="editor-section">
-                        <label for="editorDiagnosis">Diagnosis</label>
-                        <div id="editorDiagnosis" class="editable-box" contenteditable="true" data-placeholder="Diagnose-Text hier eingeben...">
-                            </div>
+                        <div id="editorAnamnesis" class="editable-box" contenteditable="true" data-placeholder="Anamnese...">
+                        </div>
                     </div>
+                </div>
 
+                <div class="editor-section-wrapper">
                     <div class="editor-section">
-                        <label for="editorFindings">Results</label>
+                        <div id="editorDiagnosis" class="editable-box" contenteditable="true" data-placeholder="Diagnose...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="editor-section-wrapper">
+                    <div class="editor-section">
                         <div id="editorFindings" class="editable-box" contenteditable="true" data-placeholder="Befunde und Untersuchungsergebnisse...">
-                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="editor-section-wrapper">
                     <div class="editor-section">
-                        <label for="editorTherapy">Therapie & medication</label>
-                        <div id="editorTherapy" class="editable-box" contenteditable="true" data-placeholder="Empfohlene Therapie und Medikation...">
-                            </div>
-                    </div>
-
-                    <div class="editor-section">
-                        <label for="editorPrognosis"> Further Progress</label>
-                        <div id="editorPrognosis" class="editable-box" contenteditable="true" data-placeholder="Prognose und Empfehlungen für das weitere Vorgehen...">
-                            </div>
+                        <div id="editorTherapy" class="editable-box" contenteditable="true" data-placeholder="Therapie und Medikation...">
+                        </div>
                     </div>
                 </div>
 
-                <div class="editor-section-wrapper full-width">
+                <div class="editor-section-wrapper">
                     <div class="editor-section">
-                        <label for="editorClosing">Closing statement</label>
-                        <div id="editorClosing" class="editable-box" contenteditable="true" data-placeholder="Mit freundlichen Grüßen, Ihr Arzt...">
-                            </div>
+                        <div id="editorPrognosis" class="editable-box" contenteditable="true" data-placeholder="Prognose und weiteres Vorgehen...">
+                        </div>
                     </div>
                 </div>
+
+                <div class="editor-section-wrapper">
+                    <div class="editor-section">
+                        <div id="editorClosing" class="editable-box" contenteditable="true" data-placeholder="Schlussformel...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="editor-sidebar-right" id="editorSidebarRight">
+                <h3>References & Warnings</h3>
+                <div class="sidebar-section">
+                    <h4>Patient Data References</h4>
+                    <ul id="patientDataRefs">
+                        <li class="ref-item success" data-section="editorHeader">Name, DOB, ID [Source: Patient Record]</li>
+                        <li class="ref-item warning" data-section="editorHeader">Address, Phone [Warning: Missing in Patient Record]</li>
+                    </ul>
+                </div>
+                <div class="sidebar-section">
+                    <h4>Anamnesis References</h4>
+                    <ul id="anamnesisRefs">
+                        <li class="ref-item success" data-section="editorAnamnesis">Chief Complaint, Symptoms [Source: Patient Interview]</li>
+                        <li class="ref-item warning" data-section="editorAnamnesis">Social History [Warning: Incomplete]</li>
+                    </ul>
+                </div>
+                <div class="sidebar-section">
+                    <h4>Diagnosis References</h4>
+                    <ul id="diagnosisRefs">
+                        <li class="ref-item success" data-section="editorDiagnosis">Primary Diagnosis [Source: Clinical Findings]</li>
+                        <li class="ref-item error" data-section="editorDiagnosis">Secondary Diagnosis [Error: Contradicts Lab Results - Awaiting Confirmation]</li>
+                    </ul>
+                </div>
+                <div class="sidebar-section">
+                    <h4>Findings References</h4>
+                    <ul id="findingsRefs">
+                        <li class="ref-item success" data-section="editorFindings">Clinical Exam [Source: Doctor's Examination]</li>
+                        <li class="ref-item success" data-section="editorFindings">Lab Results [Source: External Lab]</li>
+                        <li class="ref-item neutral" data-section="editorFindings">Imaging Results [Info: No imaging performed]</li>
+                    </ul>
+                </div>
+                <div class="sidebar-section">
+                    <h4>Therapy & Prognosis References</h4>
+                    <ul id="therapyPrognosisRefs">
+                        <li class="ref-item success" data-section="editorTherapy">Medication [Source: Treatment Protocol]</li>
+                        <li class="ref-item warning" data-section="editorPrognosis">Follow-up [Warning: Follow-up date not yet scheduled]</li>
+                    </ul>
+                </div>
+                <p class="sidebar-footer">Data last checked: 24.06.2025 14:00</p>
             </div>
         </div>
     </div>
