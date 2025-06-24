@@ -1,0 +1,349 @@
+/* editor.css */
+
+html, body {
+    height: 100%; /* Ensure html and body take full height */
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Prevent horizontal scrollbar on fixed elements */
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    background-color: #f0f2f5; /* A slightly softer background */
+}
+
+.editor-container {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin: 20px auto;
+    max-width: 1200px;
+    position: relative; /* Crucial for positioning the toolbar relative to this container */
+    padding-left: 220px; /* NEW: Make space for the fixed toolbar */
+    box-sizing: border-box; /* Include padding in width calculation */
+    min-height: calc(100vh - 40px); /* Ensure container takes up most of viewport height */
+}
+
+.editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #e85d75;
+    padding-bottom: 15px;
+}
+
+.editor-header h1 {
+    color: #e85d75;
+    font-size: 2.2em;
+    margin: 0;
+    font-weight: 600;
+}
+
+.header-actions button {
+    background-color: #e85d75;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95em;
+    margin-left: 10px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.header-actions button:hover {
+    background-color: #d44d62;
+    transform: translateY(-1px);
+}
+
+.header-actions button:active {
+    transform: translateY(0);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* NEW: Fixed Vertical Toolbar */
+.editor-toolbar-vertical {
+    position: fixed; /* Make it fixed relative to the viewport */
+    top: 50%; /* Start at the vertical center */
+    left: calc(50% - 400px - 100px);
+    transform: translateY(-50%); /* Move up by half its height to truly center it */
+    width: 180px; /* Fixed width */
+    background-color: #f0f0f0; /* Lighter background for the toolbar itself */
+    border-radius: 12px; /* More rounded corners for a softer look */
+    padding: 20px 15px; /* More padding */
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15); /* Stronger shadow for "floating" effect */
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Increased gap */
+    align-items: stretch;
+    z-index: 1000; /* Ensure it stays on top of other content */
+    border: 1px solid #e0e0e0; /* Subtle border */
+    max-height: calc(100vh - 80px); /* Limit height to viewport to prevent overflow */
+    overflow-y: auto; /* Allow scrolling within the toolbar if it's too long */
+}
+
+/* Adjustments for Toolbar Buttons */
+.toolbar-btn {
+    background-color: #ffffff; /* White background for buttons */
+    color: #555; /* Darker text color */
+    border: 1px solid #d0d0d0; /* Softer border */
+    padding: 10px 0;
+    border-radius: 8px; /* More rounded buttons */
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.1em;
+    text-align: center;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.toolbar-btn:hover {
+    background-color: #e85d75; /* Highlight color on hover */
+    border-color: #e85d75;
+    color: white; /* White text on hover */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.toolbar-btn:active,
+.toolbar-btn.active {
+    background-color: #d44d62; /* Darker highlight on active */
+    border-color: #d44d62;
+    color: white;
+    box-shadow: inset 0 1px 4px rgba(0,0,0,0.25);
+}
+
+.toolbar-btn.separator {
+    width: 100%;
+    height: 1px;
+    background-color: #ccc;
+    border: none;
+    margin: 5px 0;
+    padding: 0;
+    background-image: linear-gradient(to right, transparent, #ccc, transparent); /* Fancier separator */
+}
+
+/* Labels for Dropdowns/Color Picker */
+.toolbar-label {
+    font-size: 0.9em;
+    color: #666; /* Slightly darker grey for labels */
+    margin-top: 8px;
+    margin-bottom: -4px;
+    font-weight: 600;
+    text-align: center; /* Center labels */
+}
+
+/* Adjustments for Select Elements */
+.toolbar-select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px; /* More rounded select boxes */
+    background-color: #ffffff; /* White background */
+    cursor: pointer;
+    font-size: 0.95em;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-6.5%200-13%205.4-13%2013s5.4%2013%2013%2013h255.6c6.5%200%2013-5.4%2013-13z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 10px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); /* Inner shadow for depth */
+}
+
+.toolbar-select:focus {
+    outline: none;
+    border-color: #e85d75;
+    box-shadow: 0 0 0 2px rgba(232, 93, 117, 0.2);
+}
+
+/* Color Picker */
+.toolbar-color-picker {
+    width: 100%;
+    height: 35px;
+    padding: 3px;
+    border: 1px solid #ccc;
+    border-radius: 8px; /* More rounded */
+    background-color: #ffffff;
+    cursor: pointer;
+    box-sizing: border-box;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.toolbar-color-picker::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+.toolbar-color-picker::-webkit-color-swatch {
+    border: none;
+    border-radius: 5px; /* Inner swatch also rounded */
+}
+.toolbar-color-picker::-moz-color-swatch-wrapper {
+    padding: 0;
+}
+.toolbar-color-picker::-moz-color-swatch {
+    border: none;
+    border-radius: 5px;
+}
+
+
+/* NEW: Wrapper for the actual editor content, to handle the padding */
+.editor-main-content-wrapper {
+    /* No flex here anymore, as toolbar is fixed */
+    padding-top: 0px; /* Adjusted if needed, but the main container padding handles the left */
+}
+
+.editor-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.editor-section-wrapper {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+@media (min-width: 768px) {
+    .editor-section-wrapper {
+        grid-template-columns: 1fr 1fr;
+    }
+    .editor-section-wrapper.full-width {
+        grid-template-columns: 1fr;
+    }
+}
+
+.editor-section {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.editor-section label {
+    display: block;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 15px;
+    border-bottom: 1px dashed #eee;
+    padding-bottom: 8px;
+}
+
+.editable-box {
+    min-height: 120px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    outline: none;
+    line-height: 1.6;
+    font-size: 1em;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-y: auto;
+    max-height: 300px;
+}
+
+.editable-box:focus {
+    border-color: #e85d75;
+    box-shadow: 0 0 0 3px rgba(232, 93, 117, 0.2);
+}
+
+.editable-box:empty:not(:focus)::before {
+    content: attr(data-placeholder);
+    color: #999;
+    font-style: italic;
+}
+
+/* Responsive adjustment for smaller screens */
+@media (max-width: 1000px) { /* Adjust breakpoint for toolbar visibility */
+    .editor-container {
+        padding-left: 30px; /* Remove left padding when toolbar is not fixed beside it */
+    }
+    .editor-toolbar-vertical {
+        position: static; /* Toolbar becomes part of the normal flow */
+        transform: none; /* Remove centering transform */
+        width: 100%; /* Take full width */
+        margin: 20px 0; /* Add some margin above/below */
+        flex-direction: row; /* Horizontal layout for small screens */
+        flex-wrap: wrap; /* Buttons wrap */
+        justify-content: center;
+        top: auto; /* Reset fixed positioning properties */
+        left: auto; /* Reset fixed positioning properties */
+        max-height: none; /* No max height in mobile mode */
+        overflow-y: visible; /* No scrollbar in mobile mode */
+    }
+    .toolbar-btn, .toolbar-select, .toolbar-color-picker {
+        width: auto; /* Buttons adjust to content */
+    }
+    .toolbar-select {
+        min-width: unset; /* Reset min-width for mobile */
+        width: 100%; /* Full width if no other button next to it */
+    }
+    .toolbar-label {
+        width: 100%; /* Label above the element */
+        text-align: center;
+        margin-top: 10px; /* More space above label */
+        margin-bottom: 0;
+    }
+    .toolbar-btn.separator {
+        display: none; /* Hide separators in mobile mode */
+    }
+}
+
+
+/* Print Styles */
+@media print {
+    body {
+        background-color: #fff;
+        margin: 0;
+        padding: 0;
+    }
+    .editor-container {
+        box-shadow: none;
+        margin: 0;
+        padding: 0;
+        max-width: none;
+        width: 100%;
+        display: block; /* Flexbox for printing removed */
+        padding-left: 0 !important; /* Remove any padding set for toolbar */
+    }
+    .editor-header, .header-actions {
+        display: none;
+    }
+    .editor-main-content-wrapper {
+        display: block;
+    }
+    .editor-toolbar-vertical {
+        display: none; /* Toolbar completely hidden */
+    }
+    .editor-section-wrapper {
+        grid-template-columns: 1fr !important;
+        gap: 15px;
+    }
+    .editor-section {
+        border: none;
+        box-shadow: none;
+        padding: 10px 0;
+    }
+    .editor-section label {
+        font-size: 1.2em;
+        margin-bottom: 5px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 5px;
+        color: #000;
+    }
+    .editable-box {
+        border: none;
+        min-height: auto;
+        max-height: none;
+        overflow: visible;
+        padding: 0;
+        font-size: 1em;
+        color: #000;
+    }
+}

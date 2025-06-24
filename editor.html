@@ -1,2 +1,117 @@
-<h2>editor Page</h2>
-<p>This is a placeholder for the editor section.</p>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor</title>
+    <link rel="stylesheet" href="editor.css"> </head>
+<body>
+    <div class="editor-container">
+        <div class="editor-header">
+            <h1>Editor</h1>
+            <div class="header-actions">
+                <button id="loadKiDraftBtn">Load AI-Draft</button>
+                <button id="saveDraftBtn">Save</button>
+                <button id="printDraftBtn">Print / PDF</button>
+                <button id="exportTextBtn">Text export</button>
+            </div>
+        </div>
+
+        <div class="editor-main-layout"> <div class="editor-toolbar-vertical" id="editorToolbar">
+                <button class="toolbar-btn" data-command="bold" title="Fett (Strg+B)"><b>B</b></button>
+                <button class="toolbar-btn" data-command="italic" title="Kursiv (Strg+I)"><i>I</i></button>
+                <button class="toolbar-btn" data-command="underline" title="Unterstrichen (Strg+U)"><u>U</u></button>
+                <button class="toolbar-btn separator"></button>
+
+                <button class="toolbar-btn" data-command="insertOrderedList" title="Nummerierte Liste">OL</button>
+                <button class="toolbar-btn" data-command="insertUnorderedList" title="Aufzählungsliste">UL</button>
+                <button class="toolbar-btn separator"></button>
+
+                <label for="fontSelect" class="toolbar-label">Fount</label>
+                <select id="fontSelect" class="toolbar-select" title="Schriftart">
+                    <option value="Arial">Arial</option>
+                    <option value="Verdana">Verdana</option>
+                    <option value="Georgia">Georgia</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Courier New">Courier New</option>
+                    <option value="Impact">Impact</option>
+                    <option value="Roboto">Roboto</option>
+                </select>
+
+                <label for="fontSizeSelect" class="toolbar-label">Size</label>
+                <select id="fontSizeSelect" class="toolbar-select" title="Schriftgröße">
+                    <option value="1">8px</option>
+                    <option value="2" selected>10px</option>
+                    <option value="3">12px</option>
+                    <option value="4">14px</option>
+                    <option value="5">18px</option>
+                    <option value="6">24px</option>
+                    <option value="7">36px</option>
+                </select>
+                <button class="toolbar-btn separator"></button>
+
+                <label for="foreColorPicker" class="toolbar-label">Color</label>
+                <input type="color" id="foreColorPicker" class="toolbar-color-picker" value="#333333" title="Textfarbe">
+                <label for="backColorPicker" class="toolbar-label">background</label>
+                <input type="color" id="backColorPicker" class="toolbar-color-picker" value="#ffffff" title="Hintergrundfarbe">
+                <button class="toolbar-btn separator"></button>
+
+                <button class="toolbar-btn" data-command="undo" title="Rückgängig (Strg+Z)">⤺</button>
+                <button class="toolbar-btn" data-command="redo" title="Wiederherstellen (Strg+Y)">⤻</button>
+            </div>
+
+            <div class="editor-content">
+                <div class="editor-section-wrapper">
+                    <div class="editor-section">
+                        <label for="editorHeader">Patientdata</label>
+                        <div id="editorHeader" class="editable-box" contenteditable="true" data-placeholder="Hier kommt der Briefkopf und die Patientendaten rein...">
+                            </div>
+                    </div>
+
+                    <div class="editor-section">
+                        <label for="editorAnamnesis">Anamnesis</label>
+                        <div id="editorAnamnesis" class="editable-box" contenteditable="true" data-placeholder="Anamnese-Text hier eingeben oder von KI laden...">
+                            </div>
+                    </div>
+                </div>
+
+                <div class="editor-section-wrapper">
+                    <div class="editor-section">
+                        <label for="editorDiagnosis">Diagnosis</label>
+                        <div id="editorDiagnosis" class="editable-box" contenteditable="true" data-placeholder="Diagnose-Text hier eingeben...">
+                            </div>
+                    </div>
+
+                    <div class="editor-section">
+                        <label for="editorFindings">Results</label>
+                        <div id="editorFindings" class="editable-box" contenteditable="true" data-placeholder="Befunde und Untersuchungsergebnisse...">
+                            </div>
+                    </div>
+                </div>
+
+                <div class="editor-section-wrapper">
+                    <div class="editor-section">
+                        <label for="editorTherapy">Therapie & medication</label>
+                        <div id="editorTherapy" class="editable-box" contenteditable="true" data-placeholder="Empfohlene Therapie und Medikation...">
+                            </div>
+                    </div>
+
+                    <div class="editor-section">
+                        <label for="editorPrognosis"> Further Progress</label>
+                        <div id="editorPrognosis" class="editable-box" contenteditable="true" data-placeholder="Prognose und Empfehlungen für das weitere Vorgehen...">
+                            </div>
+                    </div>
+                </div>
+
+                <div class="editor-section-wrapper full-width">
+                    <div class="editor-section">
+                        <label for="editorClosing">Closing statement</label>
+                        <div id="editorClosing" class="editable-box" contenteditable="true" data-placeholder="Mit freundlichen Grüßen, Ihr Arzt...">
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

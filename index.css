@@ -1,0 +1,496 @@
+/* index.css */
+
+/* Allgemeine Styles für Body, Header und Sidebar */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f2e9dd;
+}
+
+.header {
+    background: linear-gradient(to right, #e85d75, #ff9aa2);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-left img {
+    height: 60px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.user-info {
+    text-align: right;
+    font-size: 0.9em;
+    color: #fff;
+}
+
+.header-menu {
+    position: relative;
+}
+
+.menu-toggle {
+    background-color: #fff;
+    border: none;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.menu-dropdown {
+    display: none;
+    position: absolute;
+    top: 45px;
+    right: 0;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    z-index: 1001;
+}
+
+.menu-dropdown button {
+    display: block;
+    width: 100%;
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+}
+
+.menu-dropdown button:hover {
+    background-color: #f1f1f1;
+}
+
+.user-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #e85d75;
+}
+
+.sidebar {
+    width: 200px;
+    background-color: #fceba9;
+    position: fixed;
+    top: 70px;
+    bottom: 0;
+    left: 0;
+    padding: 20px 10px;
+    overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.section-title {
+    background-color: #d4a017;
+    color: #fff;
+    font-weight: bold;
+    padding: 6px 10px;
+    margin: 15px 0 5px 0;
+    border-radius: 4px;
+}
+
+.nav-button {
+    background-color: #fff6ce;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 5px 0;
+    text-align: left;
+    cursor: pointer;
+    box-shadow: 1px 1px 3px #aaa;
+    text-decoration: none;
+    color: black;
+    display: block;
+    border-radius: 6px;
+    font-size: 1em;
+    transition: background-color 0.2s ease;
+}
+
+.nav-button:hover {
+    background-color: #ffe88b;
+}
+
+.main-content {
+    margin-left: 200px;
+    padding: 100px 30px 30px 30px;
+}
+
+/* ---------------------------------------------------- */
+/* Styles für dynamisch geladenen Inhalt (Modals, Buttons, etc.) */
+/* Da diese Elemente in verschiedenen geladenen HTML-Dateien verwendet werden,
+   könnten sie entweder hier in index.css bleiben oder in einer separaten `common.css`
+   oder direkt in den spezifischen CSS-Dateien der Module definiert werden.
+   Für eine "saubere" Trennung packe ich hier nur globale Layout-Styles rein.
+   Die modulspezifischen Styles, wie die für .info-container, .info-box, .modal,
+   sollten in ihren jeweiligen CSS-Dateien liegen (z.B. general-info.css, editor.css etc.).
+   Ich lasse sie hier für die Funktionalität vorerst drin, damit du sie einfach
+   in die jeweiligen Module übertragen kannst.
+*/
+
+/* Diese Styles sollten in general-info.css, dictation.css, anamnesis.css etc. verschoben werden */
+.info-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.info-box {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.info-box h3 {
+    color: #e85d75;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.progress-bar {
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.progress {
+    height: 20px;
+    background-color: #d4a017;
+    width: 0%; /* Wird durch JS gesetzt */
+    text-align: center;
+    color: white;
+    line-height: 20px;
+    transition: width 0.5s ease-in-out;
+}
+
+/* Modals (könnten in eine `modal.css` Datei) */
+.modal {
+    display: none; /* Versteckt das Modal standardmäßig */
+    position: fixed; /* Über dem gesamten Bildschirm */
+    z-index: 2000; /* Ganz oben */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4); /* Dunkler Hintergrund */
+    justify-content: center; /* Zentriert Inhalt */
+    align-items: center; /* Zentriert Inhalt */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-list-group {
+    max-height: 250px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+}
+
+.modal-list-group li {
+    padding: 8px 0;
+    cursor: pointer;
+    border-bottom: 1px dotted #eee;
+}
+.modal-list-group li:last-child {
+    border-bottom: none;
+}
+.modal-list-group li:hover {
+    background-color: #f0f0f0;
+}
+
+/* Formularstile (könnten in eine `forms.css` oder spezifische Modal-CSS) */
+#newPatientForm {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+#newPatientForm label {
+    grid-column: 1 / 2;
+    align-self: center;
+    font-weight: bold;
+}
+
+#newPatientForm input,
+#newPatientForm select,
+#newPatientForm textarea {
+    grid-column: 2 / 3;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: calc(100% - 16px); /* Adjust for padding */
+    box-sizing: border-box; /* Include padding in width */
+}
+
+#newPatientForm textarea#newHistory,
+#newPatientForm textarea#newTreatments,
+#newPatientForm textarea#newDiagnosis {
+    grid-column: 1 / 3; /* Take full width */
+    width: 100%;
+}
+#newPatientForm label[for="newHistory"],
+#newPatientForm label[for="newTreatments"],
+#newPatientForm label[for="newDiagnosis"] {
+    grid-column: 1 / 3;
+}
+
+
+#newPatientForm .actions {
+    grid-column: 1 / 3;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5em;
+    margin-top: 10px;
+}
+#newPatientForm .actions button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    color: white;
+}
+#newPatientForm .actions .cancel { background: #ccc; }
+#newPatientForm .actions .cancel:hover { background: #bbb; }
+#newPatientForm .actions .save { background: #e85d75; }
+#newPatientForm .actions .save:hover { background: #d44d62; }
+
+
+/* Buttons (könnten in eine `buttons.css` Datei) */
+.info-box button {
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    margin-right: 8px;
+    transition: background-color 0.2s ease;
+}
+.info-box button:hover {
+    background-color: #0056b3;
+}
+.info-box button#deletePatientBtn {
+    background-color: #dc3545;
+}
+.info-box button#deletePatientBtn:hover {
+    background-color: #c82333;
+}
+.info-box button#clearPatientSelectionBtn {
+    background-color: #6c757d;
+}
+.info-box button#clearPatientSelectionBtn:hover {
+    background-color: #5a6268;
+}
+
+/* Toolbar Buttons (könnten in eine `toolbar.css` Datei) */
+.toolbar {
+    margin-bottom: 1em;
+    display: flex;
+    gap: 0.5em;
+    flex-wrap: wrap;
+}
+.toolbar button {
+    padding: 0.5em 1em;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+.toolbar button:hover {
+    opacity: 0.9;
+}
+#toolbarNewPatientBtn { background: #4CAF50; }
+#toolbarNewPatientBtn:hover { background: #45a049; }
+#addNoteBoxBtn { background: #4a90e2; }
+#addNoteBoxBtn:hover { background: #3a7bd5; }
+#toolbarShowArchiveModalBtn { background: #4a90e2; }
+#toolbarShowArchiveModalBtn:hover { background: #3a7bd5; }
+#archiveCurrentPatientBtn { background: #e74c3c; }
+#archiveCurrentPatientBtn:hover { background: #d44d62; }
+
+
+/* Styles für Notizen Box (aus general-info.html, sollte nach general-info.css) */
+.info-box.notes-box {
+    grid-column: 1 / -1;
+    margin-top: 20px;
+}
+.info-box.notes-box textarea {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: Arial, sans-serif;
+    font-size: 1em;
+    resize: vertical;
+    min-height: 150px;
+    margin-bottom: 10px;
+}
+.info-box.notes-box button {
+    padding: 10px 15px;
+    background-color: #e85d75;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s ease;
+}
+.info-box.notes-box button:hover {
+    background-color: #d44d62;
+}
+
+/* Styles für Diktat-Funktion (aus dictation.html, sollte nach dictation.css) */
+#dictationContainer {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+#dictationContainer button {
+    padding: 10px 15px;
+    background-color: #e85d75;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-right: 10px;
+}
+#dictationContainer button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+#dictationResults {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+#dictationResults h3 {
+    color: #e85d75;
+    margin-bottom: 5px;
+}
+#transcribedTextOutput {
+    white-space: pre-wrap; /* Behält Zeilenumbrüche im Text bei */
+    font-family: Arial, sans-serif;
+    resize: vertical;
+}
+
+/* Styles für Anamnese (aus anamnesis.html, sollte nach anamnesis.css) */
+#anamnesisContainer {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.anamnesis-box textarea {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: Arial, sans-serif;
+    font-size: 1em;
+    resize: vertical;
+    min-height: 200px;
+}
+.anamnesis-box button {
+    margin-top: 10px;
+    padding: 10px 15px;
+    background-color: #e85d75;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+.anamnesis-box button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Patient Details Grid in General Info */
+.patient-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 15px;
+}
+
+.patient-details-grid p {
+    margin: 0;
+}
+
+.patient-details-grid .full-width {
+    grid-column: 1 / -1;
+}
+
+.patient-actions {
+    margin-top: 20px;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
